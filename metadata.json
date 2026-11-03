@@ -1,0 +1,6 @@
+{
+  "name": "PharmaDist Pro - Pharmaceutical Distribution Management System (PDMS)",
+  "description": "Enterprise-level Pharmaceutical Distribution Management System for Pakistan distributors managing multiple pharmaceutical companies, FEFO batch inventory, FBR sales invoicing, recovery, and financial accounts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

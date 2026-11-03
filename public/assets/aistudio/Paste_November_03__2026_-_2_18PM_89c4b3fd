@@ -1,0 +1,1945 @@
+# PROJECT TITLE
+Professional Pharmaceutical Distribution Management System (PDMS)
+
+## 1. PROJECT OVERVIEW
+
+Develop a complete, professional, modern, secure, scalable, and enterprise-level Pharmaceutical Distribution Management System (PDMS) specifically designed for pharmaceutical distributors operating in Pakistan.
+
+The system will be used by distribution managers, owners, accountants, sales managers, sales representatives, warehouse managers, storekeepers, recovery officers, and administrative staff.
+
+A single distribution business may distribute pharmaceutical products belonging to multiple pharmaceutical companies simultaneously.
+
+Examples of pharmaceutical companies include:
+
+1. Getz Pharma
+2. Sami Pharmaceuticals
+3. CCL Pharmaceuticals
+4. Indus Pharma
+5. Hilton Pharma
+6. Highnoon Laboratories
+7. Martin Dow
+8. AGP Limited
+9. Abbott Laboratories
+10. The Searle Company
+11. GSK Pakistan
+12. Ferozsons Laboratories
+13. Barrett Hodgson
+14. Bosch Pharmaceuticals
+15. Other pharmaceutical manufacturers.
+
+The software must support unlimited pharmaceutical companies, unlimited products, multiple warehouses, multiple sales territories, multiple sales representatives, and multiple financial accounts.
+
+The system must maintain completely separate company-wise product records, stock records, purchase records, sales records, profitability, commissions, claims, balances, and financial reports while also providing consolidated distribution-level reports.
+
+The software should be suitable for small, medium, and large pharmaceutical distribution businesses in Pakistan.
+
+## 2. CORE SOFTWARE OBJECTIVES
+
+The software must provide:
+
+- Complete distribution business management.
+- Multi-pharmaceutical-company management.
+- Multi-warehouse inventory management.
+- Batch-wise and expiry-wise stock tracking.
+- Purchase and stock receiving management.
+- Sales and distribution management.
+- Retailer and customer management.
+- Company-wise payable and receivable accounts.
+- Cash and bank management.
+- Sales representative management.
+- Recovery and credit control.
+- Expiry and near-expiry management.
+- Damaged and expired stock management.
+- Company claims and credit notes.
+- Discounts, bonuses, schemes, and promotional offers.
+- Commission and incentive management.
+- Payroll and employee management.
+- Expense and income management.
+- Comprehensive financial accounting.
+- Real-time dashboards.
+- Advanced business intelligence.
+- Complete reporting and analytics.
+- Secure data storage and automated backups.
+- Audit trails and user activity monitoring.
+
+All modules must be interconnected. Data entered in one module should automatically update all relevant modules without duplicate manual entries.
+
+---
+
+# 3. MULTI-PHARMACEUTICAL COMPANY MANAGEMENT
+
+This is one of the most important modules.
+
+The software must support unlimited pharmaceutical companies operating under one distribution business.
+
+### Company Profile
+
+Each company must have:
+
+- Company ID.
+- Company name.
+- Company logo.
+- Company address.
+- Contact numbers.
+- Email address.
+- Sales manager name.
+- Regional manager name.
+- Distribution manager name.
+- Company representative details.
+- NTN number, where applicable.
+- GST registration details, where applicable.
+- Contract start date.
+- Contract expiry date.
+- Payment terms.
+- Credit limits.
+- Commission percentage.
+- Discount policy.
+- Expiry return policy.
+- Damage return policy.
+- Sales target.
+- Company-specific remarks.
+- Active/inactive status.
+
+### Company-Wise Financial Records
+
+Maintain separate accounts for every pharmaceutical company:
+
+- Opening balance.
+- Purchase amount.
+- Sales amount.
+- Payments received.
+- Payments made.
+- Purchase returns.
+- Sales returns.
+- Credit notes.
+- Debit notes.
+- Promotional claims.
+- Expiry claims.
+- Damage claims.
+- Discounts.
+- Incentives.
+- Outstanding balance.
+- Closing balance.
+
+Provide individual company ledgers and consolidated company reports.
+
+### Company-Wise Performance
+
+Display:
+
+- Total monthly sales.
+- Yearly sales.
+- Current stock value.
+- Stock quantity.
+- Expired stock value.
+- Near-expiry stock value.
+- Purchase value.
+- Gross profit.
+- Net profit.
+- Outstanding company payable.
+- Monthly growth.
+- Sales target achievement.
+- Sales representative performance.
+
+---
+
+# 4. PRODUCT MASTER MANAGEMENT
+
+Create a comprehensive product database.
+
+### Product Information
+
+Each product should have:
+
+- Product ID.
+- Product code.
+- Barcode.
+- Product name.
+- Generic name.
+- Brand name.
+- Pharmaceutical company.
+- Product category.
+- Product subcategory.
+- Dosage form.
+- Strength.
+- Pack size.
+- Unit of measurement.
+- Manufacturer.
+- Registration number, where applicable.
+- Retail price (MRP).
+- Trade price.
+- Purchase price.
+- Wholesale price.
+- Distributor price.
+- Sales tax/GST category.
+- Maximum retail price.
+- Minimum selling price, if applicable.
+- Product image.
+- Product description.
+- Storage requirements.
+- Refrigeration requirement.
+- Controlled-product classification, where applicable.
+- Minimum stock level.
+- Maximum stock level.
+- Reorder level.
+- Active/inactive status.
+
+### Product Categories
+
+Examples:
+
+- Tablets.
+- Capsules.
+- Syrups.
+- Suspensions.
+- Injections.
+- Infusions.
+- Creams.
+- Ointments.
+- Drops.
+- Eye drops.
+- Sachets.
+- Medical devices.
+- Nutraceuticals.
+- Other pharmaceutical products.
+
+### Product Search
+
+Provide fast search by:
+
+- Product name.
+- Product code.
+- Barcode.
+- Generic name.
+- Company name.
+- Category.
+- Batch number.
+
+Support barcode scanning and quick product selection during purchasing and sales.
+
+---
+
+# 5. PURCHASE MANAGEMENT
+
+Create a complete purchase management module.
+
+### Purchase Order
+
+Features:
+
+- Purchase order number.
+- Pharmaceutical company.
+- Purchase date.
+- Supplier details.
+- Product selection.
+- Batch information, if provided.
+- Quantity.
+- Free quantity.
+- Purchase rate.
+- Discount.
+- GST/tax.
+- Additional charges.
+- Total amount.
+- Expected delivery date.
+- Payment terms.
+- Remarks.
+
+### Goods Receiving Note (GRN)
+
+When stock arrives:
+
+- Generate GRN.
+- Verify products.
+- Verify quantities.
+- Verify batch numbers.
+- Record manufacturing dates.
+- Record expiry dates.
+- Record purchase prices.
+- Record bonus quantities.
+- Record damaged quantities.
+- Record shortages.
+- Attach supplier invoice.
+- Update inventory automatically.
+
+### Purchase Invoice
+
+Generate purchase invoices with:
+
+- Automatic invoice numbering.
+- Company-wise purchase details.
+- Batch-wise product details.
+- Tax calculation.
+- Discounts.
+- Bonus quantities.
+- Freight charges.
+- Net payable amount.
+
+### Purchase Returns
+
+Support:
+
+- Full purchase returns.
+- Partial purchase returns.
+- Expired stock returns.
+- Damaged stock returns.
+- Short-supply claims.
+- Wrong-product returns.
+- Batch-wise returns.
+- Company credit note tracking.
+
+All returns must automatically adjust inventory and company accounts.
+
+---
+
+# 6. ADVANCED INVENTORY MANAGEMENT
+
+Develop a highly accurate, real-time inventory management system.
+
+### Stock Tracking
+
+Every stock movement must be recorded against:
+
+- Pharmaceutical company.
+- Product.
+- Batch number.
+- Warehouse.
+- Purchase invoice.
+- Stock transaction date.
+- Expiry date.
+
+### Inventory Features
+
+- Opening stock.
+- Purchase stock.
+- Sales stock.
+- Free stock.
+- Bonus stock.
+- Purchase returns.
+- Sales returns.
+- Stock transfers.
+- Damaged stock.
+- Expired stock.
+- Promotional stock.
+- Adjustment stock.
+- Physical stock verification.
+- Stock reconciliation.
+- Stock reservation.
+- Available stock.
+- Blocked stock.
+- Closing stock.
+
+### Batch Management
+
+Each batch must maintain:
+
+- Batch number.
+- Product name.
+- Company name.
+- Manufacturing date.
+- Expiry date.
+- Purchase rate.
+- Selling rate.
+- Initial quantity.
+- Available quantity.
+- Warehouse location.
+- Batch status.
+
+### FEFO Inventory Management
+
+Implement FEFO (First Expiry, First Out).
+
+The software should automatically recommend the batch with the earliest expiry date during sales.
+
+Allow authorized users to override batch selection with mandatory remarks and audit logging.
+
+### Expiry Management
+
+Provide alerts for:
+
+- Products expiring within 30 days.
+- Products expiring within 60 days.
+- Products expiring within 90 days.
+- Products expiring within 180 days.
+- Already expired products.
+
+Expiry alerts should be configurable.
+
+### Stock Alerts
+
+- Out of stock.
+- Low stock.
+- Overstock.
+- Slow-moving products.
+- Non-moving products.
+- Near-expiry stock.
+- Expired stock.
+- Negative stock attempts.
+
+### Stock Reports
+
+- Company-wise stock.
+- Product-wise stock.
+- Batch-wise stock.
+- Warehouse-wise stock.
+- Expiry-wise stock.
+- Stock valuation.
+- Stock movement.
+- Stock aging.
+- Physical stock versus software stock.
+- Free stock report.
+- Damaged stock report.
+
+---
+
+# 7. SALES MANAGEMENT
+
+Develop a complete pharmaceutical sales management module.
+
+### Sales Invoice
+
+Every sales invoice should include:
+
+- Invoice number.
+- Invoice date.
+- Customer name.
+- Customer code.
+- Customer category.
+- Pharmaceutical company.
+- Sales representative.
+- Territory.
+- Product name.
+- Batch number.
+- Expiry date.
+- Quantity.
+- Free quantity.
+- Trade price.
+- Discount.
+- Tax.
+- Net amount.
+- Payment method.
+- Due date.
+- Remarks.
+
+### Sales Features
+
+- Cash sales.
+- Credit sales.
+- Wholesale sales.
+- Retail pharmacy sales.
+- Institutional sales.
+- Hospital sales.
+- Clinic sales.
+- Company-wise sales.
+- Multiple products in one invoice.
+- Multiple batches of one product.
+- Percentage discounts.
+- Fixed discounts.
+- Promotional schemes.
+- Bonus products.
+- Sales returns.
+- Invoice cancellation.
+- Duplicate invoice printing.
+
+### Sales Controls
+
+- Prevent sales exceeding available stock.
+- Prevent sale of expired stock.
+- Apply FEFO automatically.
+- Apply customer credit limits.
+- Restrict unauthorized discounts.
+- Maintain complete invoice history.
+- Require approval for invoice cancellation.
+- Record all sales modifications.
+
+### Sales Invoice Printing
+
+Provide professional A4 and thermal invoice formats.
+
+Support:
+
+- Distribution logo.
+- Distribution address.
+- NTN/GST details.
+- Customer information.
+- Product details.
+- Batch details.
+- Expiry details.
+- Discounts.
+- Taxes.
+- Net payable.
+- Payment information.
+- Authorized signatures.
+- Terms and conditions.
+
+---
+
+# 8. CUSTOMER / RETAILER MANAGEMENT
+
+Maintain a comprehensive customer database.
+
+### Customer Profile
+
+- Customer ID.
+- Customer name.
+- Pharmacy/store name.
+- Owner name.
+- Contact person.
+- Mobile number.
+- WhatsApp number.
+- Address.
+- City.
+- Territory.
+- Customer category.
+- Sales representative.
+- NTN number, where applicable.
+- STRN number, where applicable.
+- Opening balance.
+- Credit limit.
+- Payment terms.
+- Customer registration date.
+- License information, where applicable.
+- License expiry date.
+- Active/inactive status.
+
+### Customer Categories
+
+- Medical stores.
+- Pharmacies.
+- Hospitals.
+- Clinics.
+- Distributors.
+- Wholesale dealers.
+- Institutions.
+- Other customers.
+
+### Customer Account Management
+
+- Customer ledger.
+- Opening balance.
+- Sales invoices.
+- Payments.
+- Outstanding balances.
+- Sales returns.
+- Credit notes.
+- Debit notes.
+- Discounts.
+- Aging analysis.
+- Credit limit monitoring.
+
+### Customer Reports
+
+- Customer-wise sales.
+- Customer-wise outstanding.
+- Customer ledger.
+- Customer payment history.
+- Customer purchase history.
+- Top customers.
+- Inactive customers.
+- Overdue customers.
+- Credit limit exceeded customers.
+
+---
+
+# 9. SALES REPRESENTATIVE MANAGEMENT
+
+Create a complete field-force management module.
+
+### Employee/Sales Representative Profile
+
+- Employee ID.
+- Name.
+- Photograph.
+- Contact number.
+- CNIC.
+- Address.
+- Joining date.
+- Assigned company.
+- Assigned territory.
+- Assigned customers.
+- Monthly salary.
+- Sales target.
+- Commission rate.
+- Incentive structure.
+- Employment status.
+
+### Sales Performance
+
+Track:
+
+- Daily sales.
+- Weekly sales.
+- Monthly sales.
+- Company-wise sales.
+- Product-wise sales.
+- Customer-wise sales.
+- Target versus achievement.
+- Sales growth.
+- Recovery performance.
+- Commission earned.
+
+### Incentive Management
+
+Allow configurable incentives based on:
+
+- Total sales.
+- Company-wise sales.
+- Product-wise sales.
+- Target achievement.
+- Collection performance.
+- New customer acquisition.
+
+Provide automatic commission calculations and approval workflows.
+
+---
+
+# 10. RECOVERY AND RECEIVABLE MANAGEMENT
+
+Develop a powerful recovery management system.
+
+### Payment Collection
+
+Record:
+
+- Receipt number.
+- Customer name.
+- Payment date.
+- Payment amount.
+- Payment method.
+- Cash/bank account.
+- Cheque number.
+- Bank name.
+- Transaction reference.
+- Sales representative.
+- Invoice references.
+- Remarks.
+
+### Payment Methods
+
+- Cash.
+- Bank transfer.
+- Cheque.
+- Pay order.
+- Online payment.
+- Other methods.
+
+### Recovery Features
+
+- Invoice-wise recovery.
+- Partial payments.
+- Advance payments.
+- Customer account adjustment.
+- Payment allocation.
+- Unallocated receipts.
+- Cheque clearance tracking.
+- Bounced cheque management.
+- Recovery targets.
+- Daily recovery reports.
+- Overdue payment alerts.
+
+### Receivable Aging
+
+Generate:
+
+- Current outstanding.
+- 1–30 days.
+- 31–60 days.
+- 61–90 days.
+- 91–120 days.
+- More than 120 days.
+
+Provide customer-wise, territory-wise, and representative-wise aging reports.
+
+---
+
+# 11. COMPANY PAYABLE MANAGEMENT
+
+Manage all payments payable to pharmaceutical companies.
+
+Features:
+
+- Company opening balance.
+- Purchase invoices.
+- Company payments.
+- Advance payments.
+- Purchase returns.
+- Credit notes.
+- Debit notes.
+- Expiry claims.
+- Damage claims.
+- Promotional claims.
+- Outstanding payable.
+- Payment due dates.
+- Payment reminders.
+
+Generate company-wise payable aging and complete ledger statements.
+
+---
+
+# 12. SALES RETURNS AND EXPIRY CLAIMS
+
+Create a dedicated claims management system.
+
+### Sales Returns
+
+Record:
+
+- Customer.
+- Original sales invoice.
+- Product.
+- Batch number.
+- Quantity.
+- Return reason.
+- Return date.
+- Return condition.
+- Approved by.
+- Credit note number.
+
+### Company Claims
+
+Track:
+
+- Expiry returns.
+- Damaged products.
+- Breakage.
+- Short supply.
+- Promotional claims.
+- Trade discount claims.
+- Price difference claims.
+- Other claims.
+
+Each claim must have:
+
+- Claim reference number.
+- Pharmaceutical company.
+- Product.
+- Batch.
+- Quantity.
+- Claim amount.
+- Submission date.
+- Supporting documents.
+- Approval status.
+- Settlement date.
+- Settled amount.
+- Outstanding claim amount.
+
+Claim statuses:
+
+- Draft.
+- Submitted.
+- Under Review.
+- Approved.
+- Rejected.
+- Partially Settled.
+- Fully Settled.
+
+---
+
+# 13. FINANCIAL ACCOUNTING
+
+Develop a comprehensive accounting module with double-entry bookkeeping.
+
+### Chart of Accounts
+
+Provide customizable account heads:
+
+- Assets.
+- Liabilities.
+- Capital.
+- Income.
+- Expenses.
+
+### Financial Modules
+
+- Cash book.
+- Bank book.
+- General ledger.
+- Journal vouchers.
+- Payment vouchers.
+- Receipt vouchers.
+- Contra vouchers.
+- Purchase vouchers.
+- Sales vouchers.
+- Expense vouchers.
+- Debit notes.
+- Credit notes.
+- Trial balance.
+- Profit and loss statement.
+- Balance sheet.
+- Cash flow statement.
+
+### Cash Management
+
+- Opening cash.
+- Cash receipts.
+- Cash payments.
+- Cash transfers.
+- Cash expenses.
+- Closing cash.
+- Cash reconciliation.
+
+### Bank Management
+
+Support multiple bank accounts.
+
+Maintain:
+
+- Bank deposits.
+- Bank withdrawals.
+- Bank transfers.
+- Cheque records.
+- Bank reconciliation.
+- Bank charges.
+- Bank statements.
+- Closing balances.
+
+### Expenses Management
+
+Expense categories:
+
+- Salaries.
+- Rent.
+- Electricity.
+- Internet.
+- Fuel.
+- Vehicle maintenance.
+- Office expenses.
+- Warehouse expenses.
+- Loading/unloading.
+- Transportation.
+- Communication.
+- Marketing.
+- Other expenses.
+
+### Profitability
+
+Calculate:
+
+- Company-wise gross profit.
+- Product-wise gross profit.
+- Invoice-wise gross profit.
+- Monthly gross profit.
+- Operating expenses.
+- Net operating profit.
+- Net profit.
+- Profit margins.
+
+All profit calculations must use configurable accounting policies and properly account for discounts, returns, free goods, taxes, and inventory costing.
+
+---
+
+# 14. WAREHOUSE AND LOGISTICS MANAGEMENT
+
+Support multiple warehouses and storage locations.
+
+Features:
+
+- Warehouse registration.
+- Warehouse manager assignment.
+- Rack and shelf management.
+- Product location tracking.
+- Stock transfers.
+- Transfer approvals.
+- Dispatch management.
+- Goods receiving.
+- Loading records.
+- Delivery challans.
+- Vehicle management.
+- Driver management.
+- Delivery routes.
+- Delivery confirmation.
+- Short delivery records.
+- Damaged delivery records.
+
+Maintain a complete stock movement history.
+
+---
+
+# 15. SCHEMES, DISCOUNTS AND BONUS MANAGEMENT
+
+Pharmaceutical distribution frequently involves special promotional schemes.
+
+Create a dedicated scheme engine.
+
+Support:
+
+- Buy X Get Y Free.
+- Quantity-based discounts.
+- Percentage discounts.
+- Fixed-amount discounts.
+- Product combination schemes.
+- Company-specific schemes.
+- Customer-specific schemes.
+- Territory-specific schemes.
+- Time-limited promotional schemes.
+
+Example:
+
+Buy 10 packs and receive 2 packs free.
+
+The system should automatically calculate the eligible free quantity.
+
+Maintain a complete record of:
+
+- Scheme name.
+- Pharmaceutical company.
+- Eligible products.
+- Scheme period.
+- Conditions.
+- Free quantities.
+- Discount amount.
+- Scheme cost.
+- Approval status.
+
+---
+
+# 16. HUMAN RESOURCE MANAGEMENT
+
+Develop a complete employee management module.
+
+Features:
+
+- Employee records.
+- CNIC records.
+- Contact details.
+- Designation.
+- Department.
+- Joining date.
+- Salary structure.
+- Attendance.
+- Leave management.
+- Salary advances.
+- Loan management.
+- Payroll.
+- Bonuses.
+- Deductions.
+- Salary slips.
+- Employee performance.
+- Resignation records.
+
+---
+
+# 17. VEHICLE AND DELIVERY MANAGEMENT
+
+Manage company-owned and rented delivery vehicles.
+
+Features:
+
+- Vehicle registration.
+- Vehicle number.
+- Driver details.
+- Vehicle type.
+- Fuel records.
+- Fuel expenses.
+- Maintenance expenses.
+- Insurance records.
+- Fitness certificate.
+- Route assignment.
+- Daily mileage.
+- Delivery records.
+- Vehicle maintenance alerts.
+
+---
+
+# 18. DASHBOARD AND BUSINESS INTELLIGENCE
+
+Create a modern, interactive dashboard.
+
+The dashboard should display:
+
+### Business Overview
+
+- Today's total sales.
+- Today's cash sales.
+- Today's credit sales.
+- Today's recovery.
+- Today's purchases.
+- Total outstanding receivables.
+- Total company payables.
+- Current inventory value.
+- Total customers.
+- Total pharmaceutical companies.
+- Total products.
+- Total employees.
+
+### Inventory Overview
+
+- Available stock.
+- Low-stock products.
+- Out-of-stock products.
+- Near-expiry stock.
+- Expired stock.
+- Damaged stock.
+- Slow-moving products.
+
+### Financial Overview
+
+- Total cash.
+- Bank balances.
+- Monthly expenses.
+- Monthly gross profit.
+- Monthly net profit.
+- Customer receivables.
+- Company payables.
+
+### Performance Analytics
+
+- Company-wise sales chart.
+- Monthly sales trend.
+- Daily sales trend.
+- Top-selling products.
+- Top customers.
+- Sales representative performance.
+- Territory-wise sales.
+- Monthly recovery trend.
+- Profitability comparison.
+
+Allow date-wise and company-wise dashboard filtering.
+
+---
+
+# 19. COMPLETE REPORTING SYSTEM
+
+The reporting system must be one of the strongest components of the software.
+
+All reports must support:
+
+- Date filters.
+- Company filters.
+- Product filters.
+- Customer filters.
+- Territory filters.
+- Sales representative filters.
+- Warehouse filters.
+- Batch filters.
+- Category filters.
+- Search and sorting.
+- Pagination.
+- Print.
+- PDF export.
+- Excel export.
+- CSV export.
+
+### A. Sales Reports
+
+1. Daily sales report.
+2. Monthly sales report.
+3. Yearly sales report.
+4. Company-wise sales.
+5. Product-wise sales.
+6. Customer-wise sales.
+7. Sales representative-wise sales.
+8. Territory-wise sales.
+9. Cash sales report.
+10. Credit sales report.
+11. Sales return report.
+12. Discount report.
+13. Free goods report.
+14. Invoice-wise profitability.
+15. Top-selling products.
+16. Slow-selling products.
+17. Sales growth report.
+18. Target achievement report.
+
+### B. Purchase Reports
+
+1. Daily purchase report.
+2. Monthly purchase report.
+3. Company-wise purchase.
+4. Product-wise purchase.
+5. Supplier-wise purchase.
+6. Purchase return report.
+7. Purchase discount report.
+8. Purchase tax report.
+9. Purchase payment report.
+10. Outstanding purchase report.
+
+### C. Stock Reports
+
+1. Current stock report.
+2. Company-wise stock.
+3. Product-wise stock.
+4. Batch-wise stock.
+5. Warehouse-wise stock.
+6. Expiry-wise stock.
+7. Near-expiry stock.
+8. Expired stock.
+9. Damaged stock.
+10. Stock valuation.
+11. Stock movement.
+12. Stock aging.
+13. Slow-moving stock.
+14. Non-moving stock.
+15. Negative stock attempts.
+16. Physical stock reconciliation.
+17. Free stock report.
+18. Stock transfer report.
+
+### D. Customer Reports
+
+1. Customer list.
+2. Customer ledger.
+3. Customer outstanding.
+4. Customer aging.
+5. Customer sales history.
+6. Customer payment history.
+7. Customer returns.
+8. Top customers.
+9. Inactive customers.
+10. Credit limit report.
+11. Overdue customer report.
+
+### E. Pharmaceutical Company Reports
+
+1. Company-wise ledger.
+2. Company-wise purchases.
+3. Company-wise sales.
+4. Company-wise stock.
+5. Company-wise profitability.
+6. Company-wise outstanding.
+7. Company-wise payment history.
+8. Company-wise claims.
+9. Company-wise expiry returns.
+10. Company-wise promotional schemes.
+11. Company-wise sales targets.
+12. Company-wise growth comparison.
+
+### F. Recovery Reports
+
+1. Daily recovery.
+2. Monthly recovery.
+3. Customer-wise recovery.
+4. Representative-wise recovery.
+5. Territory-wise recovery.
+6. Outstanding invoices.
+7. Overdue invoices.
+8. Aging analysis.
+9. Cheque pending report.
+10. Bounced cheque report.
+
+### G. Financial Reports
+
+1. Cash book.
+2. Bank book.
+3. General ledger.
+4. Trial balance.
+5. Profit and loss.
+6. Balance sheet.
+7. Cash flow.
+8. Expense report.
+9. Income report.
+10. Payment voucher report.
+11. Receipt voucher report.
+12. Bank reconciliation.
+13. Company payable statement.
+14. Customer receivable statement.
+
+### H. Employee Reports
+
+1. Employee list.
+2. Attendance report.
+3. Salary report.
+4. Payroll report.
+5. Sales representative performance.
+6. Commission report.
+7. Incentive report.
+8. Leave report.
+
+---
+
+# 20. NOTIFICATIONS AND REMINDERS
+
+Create an intelligent notification center.
+
+Notifications should include:
+
+- Near-expiry products.
+- Expired products.
+- Low stock.
+- Out-of-stock products.
+- Customer outstanding overdue.
+- Company payment due.
+- Customer credit limit exceeded.
+- Pending purchase approvals.
+- Pending sales approvals.
+- Pending claims.
+- Pending stock transfers.
+- Employee salary due.
+- Backup failure.
+- Suspicious login attempts.
+- Unauthorized access attempts.
+
+Support in-app notifications and optional email, SMS, and WhatsApp integration through authorized providers.
+
+Allow users to configure notification preferences.
+
+---
+
+# 21. SECURITY AND USER MANAGEMENT
+
+Security must be implemented at enterprise level.
+
+### User Roles
+
+Create predefined roles:
+
+1. Super Administrator.
+2. Distribution Owner.
+3. Distribution Manager.
+4. Accountant.
+5. Sales Manager.
+6. Sales Representative.
+7. Recovery Officer.
+8. Warehouse Manager.
+9. Storekeeper.
+10. Purchase Officer.
+11. Data Entry Operator.
+12. Auditor.
+13. Read-Only User.
+
+Allow custom role creation.
+
+### Role-Based Access Control
+
+Control permissions separately for:
+
+- View.
+- Create.
+- Edit.
+- Delete.
+- Approve.
+- Cancel.
+- Print.
+- Export.
+- Financial access.
+- Company access.
+- Warehouse access.
+- Report access.
+- User management.
+
+Example:
+
+A sales representative should only access assigned customers and permitted sales information.
+
+An accountant should access financial records but should not be able to modify stock without authorization.
+
+A warehouse manager should manage stock but should not access confidential financial reports unless authorized.
+
+### Security Features
+
+- Secure authentication.
+- Strong password policies.
+- Password hashing.
+- Two-factor authentication.
+- Session management.
+- Automatic logout.
+- Login attempt limits.
+- IP/device login tracking.
+- Login history.
+- Password reset security.
+- Account locking.
+- Encrypted communication using HTTPS.
+- Database encryption where appropriate.
+- Protection against SQL injection.
+- Cross-site scripting protection.
+- CSRF protection.
+- Secure API authentication.
+- Data access restrictions.
+- Sensitive data masking.
+- Audit trails.
+
+### Audit Trail
+
+Record:
+
+- User ID.
+- User name.
+- Activity.
+- Module.
+- Record ID.
+- Previous values.
+- New values.
+- Date and time.
+- IP address.
+- Device information.
+
+No user should be able to silently delete or modify audit records.
+
+Critical transactions must have approval workflows.
+
+---
+
+# 22. BACKUP AND RESTORE MANAGEMENT
+
+Create a comprehensive backup management module.
+
+### Automatic Backup
+
+Support:
+
+- Daily backups.
+- Weekly backups.
+- Monthly backups.
+- Custom backup schedules.
+- Manual backups.
+- Full database backups.
+- Incremental backups where supported.
+- File attachment backups.
+
+### Backup Destinations
+
+Support:
+
+- Local server.
+- External storage.
+- Network storage.
+- Cloud storage.
+- Google Drive integration, where configured.
+- Other supported cloud providers.
+
+### Backup Settings
+
+Allow administrators to configure:
+
+- Backup time.
+- Backup frequency.
+- Backup location.
+- Retention period.
+- Encryption.
+- Compression.
+- Automatic deletion of old backups.
+- Backup notifications.
+
+### Restore Management
+
+- Restore from backup.
+- Backup verification.
+- Backup history.
+- Restore testing.
+- Recovery point selection.
+- Restore confirmation.
+- Restore audit log.
+
+Never overwrite the production database during restoration without explicit administrator confirmation.
+
+Before restoring, automatically create a safety backup.
+
+Display backup success/failure notifications.
+
+---
+
+# 23. SYSTEM SETTINGS
+
+Create a centralized settings panel.
+
+### General Settings
+
+- Distribution name.
+- Business logo.
+- Address.
+- Contact details.
+- NTN.
+- STRN.
+- Currency.
+- Date format.
+- Time zone.
+- Financial year.
+- Invoice numbering.
+- Receipt numbering.
+- Default warehouse.
+- Default printer.
+
+### Pakistan-Specific Settings
+
+- Currency: Pakistani Rupee (PKR).
+- Currency symbol: Rs.
+- English language.
+- Optional Urdu language.
+- Pakistan date and time conventions.
+- Pakistani financial and tax configuration.
+- Configurable GST/tax rates.
+- Configurable withholding tax.
+- NTN and STRN fields.
+- CNIC fields.
+- FBR-related invoice configuration.
+- Configurable provincial and federal tax rules where applicable.
+
+Tax rules must be configurable and updated according to applicable Pakistani laws. Do not hard-code tax rates.
+
+### Printing Settings
+
+- A4 printing.
+- Thermal printing.
+- Invoice templates.
+- Receipt templates.
+- Delivery challan templates.
+- Company-wise document templates.
+- Logo and signature settings.
+
+---
+
+# 24. DATA IMPORT AND EXPORT
+
+Allow bulk data management.
+
+### Import
+
+Support:
+
+- Excel import.
+- CSV import.
+- Product import.
+- Company import.
+- Customer import.
+- Opening stock import.
+- Opening balance import.
+- Employee import.
+- Batch and expiry import.
+
+Before importing, provide:
+
+- Data preview.
+- Column mapping.
+- Duplicate detection.
+- Validation.
+- Error report.
+- Import confirmation.
+
+Never silently overwrite existing financial or inventory records.
+
+### Export
+
+Support:
+
+- Excel.
+- CSV.
+- PDF.
+- Printable reports.
+- JSON backup/export where appropriate.
+
+---
+
+# 25. ADVANCED SEARCH
+
+Implement a global search system.
+
+Search across:
+
+- Products.
+- Customers.
+- Pharmaceutical companies.
+- Invoices.
+- Purchase orders.
+- Batch numbers.
+- Receipts.
+- Payments.
+- Claims.
+- Employees.
+- Vouchers.
+- Stock transactions.
+
+Provide fast search results with filters and direct record access according to permissions.
+
+---
+
+# 26. OPTIONAL CUSTOMER AND MANAGEMENT PORTALS
+
+Design the system so additional portals can be enabled.
+
+### Management Portal
+
+Allow authorized owners and managers to:
+
+- View business performance remotely.
+- Monitor sales.
+- Monitor recovery.
+- View company-wise profitability.
+- Check outstanding balances.
+- Monitor stock.
+- Approve transactions.
+- View notifications.
+
+### Customer Portal
+
+Optional customer access for:
+
+- View account statement.
+- View invoices.
+- View outstanding balance.
+- View payment history.
+- Submit order requests.
+- Track order status.
+- Download invoices.
+
+### Sales Representative Portal
+
+Optional mobile-friendly portal for:
+
+- Assigned customer list.
+- Customer outstanding.
+- Sales orders.
+- Sales targets.
+- Recovery entry.
+- Daily performance.
+- Product availability.
+
+---
+
+# 27. DATABASE DESIGN AND DATA INTEGRITY
+
+Use a professionally normalized relational database.
+
+Recommended database: PostgreSQL or MySQL.
+
+Create properly related tables for:
+
+- Users.
+- Roles.
+- Permissions.
+- Pharmaceutical companies.
+- Products.
+- Categories.
+- Warehouses.
+- Batches.
+- Inventory.
+- Stock movements.
+- Suppliers.
+- Customers.
+- Purchase orders.
+- Purchase invoices.
+- Purchase returns.
+- Sales invoices.
+- Sales invoice items.
+- Sales returns.
+- Payments.
+- Receipts.
+- Company ledgers.
+- Customer ledgers.
+- General ledger.
+- Journal entries.
+- Expense records.
+- Claims.
+- Employees.
+- Payroll.
+- Schemes.
+- Notifications.
+- Audit logs.
+- Backup records.
+- System settings.
+
+### Database Requirements
+
+- Primary keys.
+- Foreign keys.
+- Appropriate indexes.
+- Unique constraints.
+- Transaction management.
+- Referential integrity.
+- Data validation.
+- Soft deletion where appropriate.
+- Financial transaction immutability.
+- Database migration management.
+
+Every financial transaction must use atomic database transactions to prevent inconsistent records.
+
+Stock quantities must never become negative through unauthorized transactions.
+
+All ledger entries must reconcile with their corresponding source transactions.
+
+---
+
+# 28. USER INTERFACE AND DESIGN
+
+Create a premium, modern, clean, professional business application.
+
+### Design Requirements
+
+- Modern dashboard.
+- Responsive layout.
+- Professional sidebar.
+- Top navigation.
+- Clean data tables.
+- Advanced filters.
+- Attractive charts.
+- Modal forms.
+- Quick action buttons.
+- Keyboard shortcuts.
+- Searchable dropdowns.
+- Pagination.
+- Sorting.
+- Dark mode.
+- Light mode.
+- Mobile responsiveness.
+
+### Suggested Navigation Menu
+
+1. Dashboard.
+2. Pharmaceutical Companies.
+3. Products.
+4. Customers.
+5. Suppliers.
+6. Purchases.
+7. Sales.
+8. Sales Returns.
+9. Purchase Returns.
+10. Inventory.
+11. Batch Management.
+12. Expiry Management.
+13. Stock Transfers.
+14. Recovery.
+15. Company Payables.
+16. Claims Management.
+17. Cash & Bank.
+18. Accounting.
+19. Expenses.
+20. Employees.
+21. Payroll.
+22. Sales Representatives.
+23. Schemes & Discounts.
+24. Warehouses.
+25. Vehicles & Deliveries.
+26. Reports.
+27. Notifications.
+28. User Management.
+29. Audit Logs.
+30. Backup & Restore.
+31. Settings.
+
+---
+
+# 29. TECHNICAL ARCHITECTURE
+
+Build the software using a modern, secure, maintainable architecture.
+
+Suggested technology stack:
+
+### Frontend
+- React.js or Next.js.
+- TypeScript.
+- Tailwind CSS.
+- Professional component library.
+- Responsive dashboard components.
+- Charting library.
+
+### Backend
+- Node.js with NestJS or another enterprise-grade backend framework.
+- REST API or well-designed API architecture.
+- Server-side validation.
+- Business logic services.
+- Background job processing.
+
+### Database
+- PostgreSQL.
+- Redis for caching and background processing where required.
+
+### Infrastructure
+- Linux or Windows Server deployment.
+- Docker support.
+- Nginx reverse proxy.
+- SSL/HTTPS.
+- Automated database backup.
+- Cloud or on-premises deployment.
+
+### Application Requirements
+
+- Modular architecture.
+- Scalable codebase.
+- Reusable components.
+- API documentation.
+- Database migration scripts.
+- Error logging.
+- Application monitoring.
+- Automated testing.
+- Secure deployment.
+
+The software must support both local network deployment and secure cloud-based deployment.
+
+---
+
+# 30. IMPORTANT BUSINESS RULES
+
+Implement the following critical rules:
+
+1. Every product must belong to a pharmaceutical company.
+2. Each product may have multiple batches.
+3. Each batch must have a manufacturing date and expiry date where applicable.
+4. The same product can exist in multiple warehouses.
+5. Sales must automatically reduce stock.
+6. Purchases must automatically increase stock after GRN confirmation.
+7. Purchase returns must reduce stock.
+8. Sales returns must increase saleable stock only after inspection and approval.
+9. Expired products must never be available for normal sale.
+10. FEFO must be the default batch selection policy.
+11. Every sales invoice must update customer accounts.
+12. Every purchase invoice must update company payable accounts.
+13. Every payment must update the relevant financial ledger.
+14. Every approved return must update the relevant stock and financial accounts.
+15. Every financial transaction must have a unique reference.
+16. Deleted or cancelled transactions must retain their audit history.
+17. Every stock adjustment must require authorization.
+18. Every discount beyond configured limits must require approval.
+19. Every company must have separate financial reporting.
+20. Consolidated reports must combine all company records without mixing their identities.
+21. Every stock movement must have a traceable source transaction.
+22. No financial record should be permanently deleted through normal application operations.
+23. Opening balances must be configurable during initial setup.
+24. Reports must reflect actual posted transactions, not merely draft documents.
+
+---
+
+# 31. ADDITIONAL ADVANCED FEATURES
+
+Implement these features to make the system more powerful than ordinary distribution software.
+
+### A. Smart Reordering
+
+Automatically recommend purchase quantities using:
+
+- Average daily sales.
+- Current stock.
+- Pending purchases.
+- Lead time.
+- Minimum stock.
+- Maximum stock.
+- Seasonal demand.
+
+### B. Product Profitability Analyzer
+
+Analyze product-wise:
+
+- Purchase cost.
+- Selling price.
+- Discounts.
+- Free goods.
+- Sales returns.
+- Gross profit.
+- Profit margin.
+- Stock holding cost, where configured.
+
+### C. Expiry Risk Analyzer
+
+Identify:
+
+- Products at risk of expiry.
+- Estimated expiry loss.
+- Products requiring immediate return.
+- Slow-moving batches.
+- Company-wise expiry exposure.
+
+### D. Sales Forecasting
+
+Generate estimated future sales based on historical sales data.
+
+### E. Customer Risk Analysis
+
+Identify customers with:
+
+- High outstanding balances.
+- Frequent late payments.
+- Excessive credit utilization.
+- Declining purchases.
+- High return rates.
+
+### F. Company Performance Comparison
+
+Compare pharmaceutical companies based on:
+
+- Sales.
+- Profitability.
+- Stock turnover.
+- Expiry losses.
+- Outstanding payable.
+- Growth.
+- Return on investment.
+
+### G. Transaction Approval Workflow
+
+Support configurable approvals for:
+
+- Sales discounts.
+- Sales invoice cancellation.
+- Purchase approval.
+- Stock adjustments.
+- Expiry returns.
+- Customer credit limits.
+- Company payments.
+- Journal entries.
+- Expense vouchers.
+
+### H. Document Attachments
+
+Allow users to attach:
+
+- Supplier invoices.
+- Company statements.
+- Payment receipts.
+- Bank deposit slips.
+- Return documents.
+- Claims documents.
+- Customer licenses.
+- Other supporting files.
+
+### I. WhatsApp Integration
+
+Where an authorized WhatsApp Business API provider is configured, support:
+
+- Invoice sharing.
+- Payment reminders.
+- Customer statements.
+- Order confirmations.
+- Expiry notifications.
+- Management alerts.
+
+---
+
+# 32. IMPLEMENTATION PHASES
+
+Develop the software in the following phases.
+
+### Phase 1: Foundation
+
+- Database architecture.
+- Authentication.
+- User roles.
+- Company management.
+- Product management.
+- Customer management.
+- System settings.
+
+### Phase 2: Core Distribution Operations
+
+- Purchase management.
+- GRN.
+- Inventory.
+- Batch management.
+- Expiry management.
+- Sales invoicing.
+- Sales returns.
+- Purchase returns.
+
+### Phase 3: Financial Management
+
+- Customer ledgers.
+- Company ledgers.
+- Recovery.
+- Cash management.
+- Bank management.
+- Expenses.
+- Accounting.
+- Profit and loss.
+
+### Phase 4: Management Operations
+
+- Employees.
+- Sales representatives.
+- Payroll.
+- Schemes.
+- Claims.
+- Warehouse management.
+- Logistics.
+
+### Phase 5: Reporting and Intelligence
+
+- All operational reports.
+- Financial reports.
+- Analytics.
+- Dashboards.
+- Expiry risk analysis.
+- Profitability analysis.
+- Sales forecasting.
+
+### Phase 6: Security and Automation
+
+- Advanced permissions.
+- Audit logs.
+- Backup and restore.
+- Notifications.
+- Approval workflows.
+- Security testing.
+
+### Phase 7: Final Testing and Deployment
+
+- Functional testing.
+- Database testing.
+- Inventory reconciliation testing.
+- Accounting reconciliation testing.
+- Performance testing.
+- Security testing.
+- Backup restoration testing.
+- User acceptance testing.
+- Production deployment.
+
+---
+
+# 33. QUALITY ASSURANCE AND ACCEPTANCE CRITERIA
+
+Before declaring the software complete, verify the following:
+
+1. Multiple pharmaceutical companies can operate independently within one distribution.
+2. Company-wise inventory and financial reports are accurate.
+3. Product batches and expiry dates are properly maintained.
+4. FEFO works correctly.
+5. Sales automatically update inventory and customer ledgers.
+6. Purchases automatically update inventory and company ledgers after receiving confirmation.
+7. Sales and purchase returns correctly reverse the relevant transactions.
+8. Customer payments correctly reduce outstanding balances.
+9. Company payments correctly reduce payables.
+10. Cash and bank balances reconcile with financial transactions.
+11. Profit and loss reports are mathematically accurate.
+12. Stock valuation matches the configured costing method.
+13. Unauthorized users cannot access restricted records.
+14. All critical actions are recorded in audit logs.
+15. Backups can be restored successfully.
+16. Reports export correctly to Excel and PDF.
+17. The application works correctly on desktop, tablet, and mobile.
+18. No critical errors remain in production workflows.
+
+Provide automated tests for all critical business operations.
+
+---
+
+# 34. FINAL DEVELOPMENT INSTRUCTIONS
+
+Develop this application as a complete, production-ready pharmaceutical distribution ERP system, not as a simple inventory application or basic billing software.
+
+Important instructions:
+
+- Do not create dummy buttons or nonfunctional modules.
+- Do not use static dashboard figures.
+- Do not use hardcoded business records.
+- Every form must save real data.
+- Every report must retrieve real database records.
+- Every transaction must update all relevant modules.
+- All calculations must be accurate.
+- Every module must be properly interconnected.
+- Implement complete validation.
+- Provide professional error handling.
+- Provide user-friendly confirmation messages.
+- Include sample/demo data only in a separate demo environment.
+- Provide database schema and documentation.
+- Provide installation and deployment instructions.
+- Provide administrator documentation.
+- Provide user manuals.
+- Provide automated backup and recovery procedures.
+
+The final deliverable must include:
+
+1. Complete working application.
+2. Complete source code.
+3. Database schema.
+4. Database migration files.
+5. API documentation.
+6. User role and permission configuration.
+7. Complete reporting system.
+8. Backup and restore system.
+9. Security and audit system.
+10. Installation documentation.
+11. Administrator manual.
+12. End-user manual.
+13. Testing documentation.
+14. Production deployment guide.
+
+**ULTIMATE GOAL:**
+
+Build a powerful, reliable, secure, intelligent, and professional Pharmaceutical Distribution Management ERP System for Pakistani pharmaceutical distributors handling multiple pharmaceutical companies under one distribution business.
+
+The system must give distribution owners and managers complete control over inventory, purchases, sales, recoveries, accounts, company-wise performance, profitability, expiry management, and day-to-day business operations through one centralized platform.

@@ -1,0 +1,300 @@
+import React, { useMemo } from 'react';
+import {
+  Cpu,
+  AlertTriangle,
+  Clock,
+  TrendingUp,
+  Package,
+  Building2,
+  FileBadge,
+  ShoppingCart,
+  ArrowRight,
+  CheckCircle2
+} from 'lucide-react';
+import { usePDMS } from '../context/PDMSContext';
+import { Badge } from '../components/common/Badge';
+
+export const SmartAnalyzersView: React.FC = () => {
+  const { batches, products, companies, salesInvoices, addCompanyClaim, addPurchaseOrder } = usePDMS();
+
+  // Expiry Risk Analyzer
+  const expiryAnalysis = useMemo(() => {
+    const now = new Date().getTime();
+    const riskBatches = batches
+      .filter(b => b.availableQuantity > 0)
+      .map(b => {
+        const prod = products.find(p => p.id === b.productId);
+        const comp = companies.find(c => c.id === b.companyId);
+        const expTime = new Date(b.expiryDate).getTime();
+        const daysLeft = Math.ceil((expTime - now) / (1000 * 60 * 60 * 24));
+        const exposureValue = b.availableQuantity * b.purchaseRate;
+
+        let riskLevel: 'Critical (≤30d)' | 'High (31-60d)' | 'Medium (61-90d)' | 'Safe' = 'Safe';
+        if (daysLeft <= 30) riskLevel = 'Critical (≤30d)';
+        else if (daysLeft <= 60) riskLevel = 'High (31-60d)';
+        else if (daysLeft <= 90) riskLevel = 'Medium (61-90d)';
+
+        return {
+          batch: b,
+          product: prod,
+          company: comp,
+          daysLeft,
+          exposureValue,
+          riskLevel
+        };
+      })
+      .filter(item => item.riskLevel !== 'Safe')
+      .sort((a, b) => a.daysLeft - b.daysLeft);
+
+    const totalExposure = riskBatches.reduce((sum, item) => sum + item.exposureValue, 0);
+
+    return {
+      riskBatches,
+      totalExposure
+    };
+  }, [batches, products, companies]);
+
+  // Smart Reordering Analyzer (Velocity & Run-rate)
+  const reorderRecommendations = useMemo(() => {
+    return products
+      .map(p => {
+        const totalStock = batches
+          .filter(b => b.productId === p.id && b.status !== 'Expired')
+          .reduce((acc, curr) => acc + curr.availableQuantity, 0);
+
+        const comp = companies.find(c => c.id === p.companyId);
+
+        // Est 30-day velocity from past invoices
+        const soldInvoices = salesInvoices.filter(inv => inv.status !== 'Cancelled');
+        let pastUnitsSold = 0;
+        soldInvoices.forEach(inv => {
+          inv.items.forEach(item => {
+            if (item.productId === p.id) {
+              pastUnitsSold += item.quantity;
+            }
+          });
+        });
+
+        // Run rate: estimated days of inventory remaining
+        const dailyVelocity = Math.max(1, pastUnitsSold / 30);
+        const daysOfSupply = Math.round(totalStock / dailyVelocity);
+        const suggestedOrderQty = Math.max(0, p.maxStock - totalStock);
+
+        const isUrgent = totalStock <= p.reorderLevel;
+
+        return {
+          product: p,
+          company: comp,
+          totalStock,
+          daysOfSupply,
+          suggestedOrderQty,
+          isUrgent
+        };
+      })
+      .filter(r => r.isUrgent)
+      .sort((a, b) => a.daysOfSupply - b.daysOfSupply);
+  }, [products, batches, companies, salesInvoices]);
+
+  const handleQuickClaim = (item: (typeof expiryAnalysis.riskBatches)[0]) => {
+    if (!item.company) return;
+    addCompanyClaim({
+      claimNumber: `CLM-${item.company.shortCode}-${Date.now().toString().slice(-4)}`,
+      companyId: item.company.id,
+      companyName: item.company.name,
+      claimType: 'Expiry Return',
+      submissionDate: new Date().toISOString().split('T')[0],
+      productId: item.product?.id,
+      productName: item.product?.name,
+      batchNumber: item.batch.batchNumber,
+      quantity: item.batch.availableQuantity,
+      claimAmount: item.exposureValue,
+      status: 'Submitted',
+      settledAmount: 0,
+      remarks: `Automated claim generated from Expiry Risk Analyzer (${item.daysLeft} days to expiry)`
+    });
+  };
+
+  const handleQuickPo = (rec: (typeof reorderRecommendations)[0]) => {
+    if (!rec.company) return;
+    addPurchaseOrder({
+      poNumber: `PO-${rec.company.shortCode}-AUTO-${Date.now().toString().slice(-4)}`,
+      companyId: rec.company.id,
+      companyName: rec.company.name,
+      date: new Date().toISOString().split('T')[0],
+      expectedDeliveryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      items: [
+        {
+          id: `poi-auto-${Date.now()}`,
+          productId: rec.product.id,
+          productName: rec.product.name,
+          quantity: rec.suggestedOrderQty || 500,
+          bonusExpected: Math.floor((rec.suggestedOrderQty || 500) * 0.1),
+          unitPrice: rec.product.purchasePrice,
+          totalPrice: (rec.suggestedOrderQty || 500) * rec.product.purchasePrice
+        }
+      ],
+      totalAmount: (rec.suggestedOrderQty || 500) * rec.product.purchasePrice,
+      status: 'Draft',
+      remarks: 'Automated PO generated by Smart Reordering Analyzer based on low days-of-supply'
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-slate-900 border border-slate-800 rounded-lg p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Cpu className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-lg font-bold text-white tracking-tight">
+            Distribution Business Intelligence & Analyzers
+          </h2>
+          <Badge variant="emerald">Algorithmic Auditing</Badge>
+        </div>
+        <p className="text-xs text-slate-400">
+          Proactive risk detection: analyzes expiration time horizons, commercial capital at risk, stockout probabilities, and automated PO generation
+        </p>
+      </div>
+
+      {/* Grid: Expiry Risk vs Smart Reordering */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Module A: Expiry Risk Analyzer */}
+        <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4 flex flex-col">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-rose-400" />
+                <h3 className="text-sm font-bold text-white">Expiry Capital Risk Analyzer</h3>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Total commercial exposure:{' '}
+                <strong className="text-rose-400 font-mono">
+                  Rs. {expiryAnalysis.totalExposure.toLocaleString()}
+                </strong>
+              </p>
+            </div>
+            <Badge variant="rose">{expiryAnalysis.riskBatches.length} Batches</Badge>
+          </div>
+
+          <div className="flex-1 space-y-3 overflow-y-auto max-h-[480px]">
+            {expiryAnalysis.riskBatches.length > 0 ? (
+              expiryAnalysis.riskBatches.map(item => (
+                <div
+                  key={item.batch.id}
+                  className="p-3 bg-slate-950/60 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors text-xs space-y-2"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-semibold text-white">{item.product?.name}</div>
+                      <div className="text-[10px] text-slate-400">
+                        Batch: <span className="font-mono text-emerald-400">{item.batch.batchNumber}</span> ·{' '}
+                        {item.company?.name}
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        item.daysLeft <= 30 ? 'rose' : item.daysLeft <= 60 ? 'amber' : 'sky'
+                      }
+                    >
+                      {item.daysLeft <= 0 ? 'EXPIRED' : `${item.daysLeft} days`}
+                    </Badge>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[11px] font-mono pt-1 border-t border-slate-800/60">
+                    <span className="text-slate-400">
+                      Units: <strong className="text-white">{item.batch.availableQuantity}</strong>
+                    </span>
+                    <span className="text-rose-400 font-bold">
+                      Risk: Rs. {item.exposureValue.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <button
+                      onClick={() => handleQuickClaim(item)}
+                      className="px-2.5 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-800/60 rounded text-[11px] font-semibold cursor-pointer transition-colors"
+                    >
+                      Auto-Draft Company Claim →
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12 text-slate-500">
+                <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400 mb-2" />
+                <p className="text-xs text-slate-400">No batches currently within the 90-day expiry threshold</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Module B: Smart Reordering Engine */}
+        <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4 flex flex-col">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4 text-emerald-400" />
+                <h3 className="text-sm font-bold text-white">Smart Reordering & Run-Rate Engine</h3>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Predictive replenishment based on historical sales velocity and lead times
+              </p>
+            </div>
+            <Badge variant="amber">{reorderRecommendations.length} Reorders Needed</Badge>
+          </div>
+
+          <div className="flex-1 space-y-3 overflow-y-auto max-h-[480px]">
+            {reorderRecommendations.length > 0 ? (
+              reorderRecommendations.map(rec => (
+                <div
+                  key={rec.product.id}
+                  className="p-3 bg-slate-950/60 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors text-xs space-y-2"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-semibold text-white">{rec.product.name}</div>
+                      <div className="text-[10px] text-slate-400">
+                        {rec.product.genericName} · <span className="text-emerald-400">{rec.company?.shortCode}</span>
+                      </div>
+                    </div>
+                    <Badge variant="amber">
+                      ~{rec.daysOfSupply} Days of Stock Left
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 font-mono text-[11px] p-2 bg-slate-900 rounded border border-slate-800 text-center">
+                    <div>
+                      <span className="text-slate-500 block text-[9px]">Current Stock</span>
+                      <span className="font-bold text-white">{rec.totalStock}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[9px]">Reorder Threshold</span>
+                      <span className="font-bold text-amber-400">{rec.product.reorderLevel}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[9px]">Suggested PO Qty</span>
+                      <span className="font-bold text-emerald-400">{rec.suggestedOrderQty}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <button
+                      onClick={() => handleQuickPo(rec)}
+                      className="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-800/60 rounded text-[11px] font-semibold cursor-pointer transition-colors"
+                    >
+                      Draft Purchase Order ({rec.suggestedOrderQty} units) →
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12 text-slate-500">
+                <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400 mb-2" />
+                <p className="text-xs text-slate-400">All product inventories are above reorder thresholds</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
