@@ -3,6 +3,8 @@ import {
   UserRole,
   UserSession,
   PharmaCompany,
+  Branch,
+  Supplier,
   Product,
   StockBatch,
   Warehouse,
@@ -22,10 +24,15 @@ import {
   DeliveryVehicle,
   Employee,
   AuditLog,
+  StockTransfer,
+  ProductRecall,
+  ProductRecallAffectedCustomer,
   SystemSettings
 } from '../types/pdms';
 import {
   initialCompanies,
+  initialBranches,
+  initialSuppliers,
   initialProducts,
   initialBatches,
   initialWarehouses,
@@ -44,12 +51,14 @@ import {
   initialVehicles,
   initialEmployees,
   initialAuditLogs,
+  initialStockTransfers,
+  initialProductRecalls,
   initialSettings
 } from '../data/initialData';
 
 export interface SystemNotification {
   id: string;
-  type: 'expiry' | 'credit' | 'stock' | 'claim' | 'system';
+  type: 'expiry' | 'credit' | 'stock' | 'claim' | 'recall' | 'system';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   message: string;
@@ -65,11 +74,15 @@ interface PDMSContextType {
   // Global filters & Theme
   selectedCompanyFilter: string; // 'all' or companyId
   setSelectedCompanyFilter: (companyId: string) => void;
+  selectedBranchFilter: string; // 'all' or branchId
+  setSelectedBranchFilter: (branchId: string) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 
   // Master Data
   companies: PharmaCompany[];
+  branches: Branch[];
+  suppliers: Supplier[];
   products: Product[];
   batches: StockBatch[];
   warehouses: Warehouse[];
@@ -88,6 +101,8 @@ interface PDMSContextType {
   vehicles: DeliveryVehicle[];
   employees: Employee[];
   auditLogs: AuditLog[];
+  stockTransfers: StockTransfer[];
+  productRecalls: ProductRecall[];
   settings: SystemSettings;
 
   // Notifications
@@ -105,6 +120,14 @@ interface PDMSContextType {
   addSalesReturn: (ret: Omit<SalesReturn, 'id'>) => SalesReturn;
   addStockAdjustment: (batchId: string, quantityDelta: number, reason: string) => void;
   addNewBatch: (batch: Omit<StockBatch, 'id'>) => StockBatch;
+
+  // Multi-Branch, Transfers & Recall Operations
+  addBranch: (branch: Omit<Branch, 'id'>) => Branch;
+  addSupplier: (supplier: Omit<Supplier, 'id'>) => Supplier;
+  addStockTransfer: (transfer: Omit<StockTransfer, 'id'>) => StockTransfer;
+  receiveStockTransfer: (transferId: string) => void;
+  initiateProductRecall: (recallData: Omit<ProductRecall, 'id' | 'affectedCustomers' | 'blockedInWarehouseQty' | 'totalDistributedQty' | 'totalRecoveredQty'>) => ProductRecall;
+  updateCustomerRecallStatus: (recallId: string, customerId: string, returnedQty: number, status: ProductRecallAffectedCustomer['notificationStatus']) => void;
 
   // CRUD
   addProduct: (product: Omit<Product, 'id'>) => Product;
@@ -133,7 +156,7 @@ interface PDMSContextType {
 
 const PDMSContext = createContext<PDMSContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'pharma_pdms_data_v1';
+const LOCAL_STORAGE_KEY = 'pharma_pdms_data_v2';
 
 export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Theme state
@@ -178,13 +201,24 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  // Global Company Filter
+  // Global Filter: Company & Branch
   const [selectedCompanyFilter, setSelectedCompanyFilter] = useState<string>('all');
+  const [selectedBranchFilter, setSelectedBranchFilter] = useState<string>('all');
 
   // Load from local storage or fallback to initial dataset
   const [companies, setCompanies] = useState<PharmaCompany[]>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_companies');
     return saved ? JSON.parse(saved) : initialCompanies;
+  });
+
+  const [branches, setBranches] = useState<Branch[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_branches');
+    return saved ? JSON.parse(saved) : initialBranches;
+  });
+
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_suppliers');
+    return saved ? JSON.parse(saved) : initialSuppliers;
   });
 
   const [products, setProducts] = useState<Product[]>(() => {
@@ -277,6 +311,16 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return saved ? JSON.parse(saved) : initialAuditLogs;
   });
 
+  const [stockTransfers, setStockTransfers] = useState<StockTransfer[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_stockTransfers');
+    return saved ? JSON.parse(saved) : initialStockTransfers;
+  });
+
+  const [productRecalls, setProductRecalls] = useState<ProductRecall[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_productRecalls');
+    return saved ? JSON.parse(saved) : initialProductRecalls;
+  });
+
   const [settings, setSettings] = useState<SystemSettings>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_settings');
     return saved ? JSON.parse(saved) : initialSettings;
@@ -285,6 +329,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Persist to local storage
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY + '_companies', JSON.stringify(companies));
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_branches', JSON.stringify(branches));
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_suppliers', JSON.stringify(suppliers));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_products', JSON.stringify(products));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_batches', JSON.stringify(batches));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_warehouses', JSON.stringify(warehouses));
@@ -303,9 +349,13 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(LOCAL_STORAGE_KEY + '_vehicles', JSON.stringify(vehicles));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_employees', JSON.stringify(employees));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_auditLogs', JSON.stringify(auditLogs));
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_stockTransfers', JSON.stringify(stockTransfers));
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_productRecalls', JSON.stringify(productRecalls));
     localStorage.setItem(LOCAL_STORAGE_KEY + '_settings', JSON.stringify(settings));
   }, [
     companies,
+    branches,
+    suppliers,
     products,
     batches,
     warehouses,
@@ -324,6 +374,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     vehicles,
     employees,
     auditLogs,
+    stockTransfers,
+    productRecalls,
     settings
   ]);
 
@@ -335,19 +387,26 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       userId: currentUser.id,
       userName: currentUser.name,
       userRole: currentUser.role,
+      branchId: selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr',
       module,
       action,
       details,
-      ipAddress: '192.168.1.100'
+      ipAddress: '192.168.10.45'
     };
     setAuditLogs(prev => [newLog, ...prev]);
   };
 
   // Helper: FEFO calculation
   const getFEFOBatchesForProduct = (productId: string, requestedQty: number) => {
-    // Filter active batches for this product with available qty > 0, sorted by expiryDate ascending (FEFO)
     const validBatches = batches
-      .filter(b => b.productId === productId && b.availableQuantity > 0 && b.status !== 'Expired' && b.status !== 'Quarantined')
+      .filter(
+        b =>
+          b.productId === productId &&
+          b.availableQuantity > 0 &&
+          b.status !== 'Expired' &&
+          b.status !== 'Quarantined' &&
+          b.status !== 'Recalled'
+      )
       .sort((a, b) => new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime());
 
     let remainingNeeded = requestedQty;
@@ -397,21 +456,18 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'Customer not found' };
     }
 
-    // Check credit limit if payment method is Credit
     if (invoiceData.paymentMethod === 'Credit') {
       const projectedBalance = targetCustomer.currentBalance + invoiceData.balanceDue;
       if (projectedBalance > targetCustomer.creditLimit && settings.requireCreditLimitOverrideApproval) {
-        // If owner or manager, allow with logged override, else reject
         if (currentUser.role !== 'Distribution Owner' && currentUser.role !== 'Super Administrator' && currentUser.role !== 'Distribution Manager') {
           return {
             success: false,
-            error: `Credit limit exceeded! Store limit: Rs. ${targetCustomer.creditLimit.toLocaleString()}, Current Balance: Rs. ${targetCustomer.currentBalance.toLocaleString()}. Requires Owner or Distribution Manager override approval.`
+            error: `Credit limit exceeded! Limit: Rs. ${targetCustomer.creditLimit.toLocaleString()}, Balance: Rs. ${targetCustomer.currentBalance.toLocaleString()}. Requires Owner or Distribution Manager override approval.`
           };
         }
       }
     }
 
-    // Check batch quantities availability and reduce stock atomically
     const batchUpdates: { [batchId: string]: number } = {};
     for (const item of invoiceData.items) {
       const totalUnits = item.quantity + (item.bonusQuantity || 0);
@@ -426,30 +482,29 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
           error: `Insufficient stock for Batch ${batchObj ? batchObj.batchNumber : bId}. Available: ${batchObj ? batchObj.availableQuantity : 0}, Requested: ${deduction}`
         };
       }
+      if (batchObj.status === 'Recalled' || batchObj.status === 'Quarantined') {
+        return {
+          success: false,
+          error: `Batch ${batchObj.batchNumber} is currently under regulatory quarantine / recall and cannot be sold!`
+        };
+      }
     }
 
-    // Deduct batches
     setBatches(prev =>
       prev.map(b => {
         if (batchUpdates[b.id]) {
           const newQty = b.availableQuantity - batchUpdates[b.id];
-          return {
-            ...b,
-            availableQuantity: newQty,
-            status: newQty === 0 ? b.status : b.status
-          };
+          return { ...b, availableQuantity: newQty };
         }
         return b;
       })
     );
 
-    // Update Customer Balance
     const newCustomerBalance = targetCustomer.currentBalance + invoiceData.balanceDue;
     setCustomers(prev =>
       prev.map(c => (c.id === targetCustomer.id ? { ...c, currentBalance: newCustomerBalance } : c))
     );
 
-    // Update Sales Rep sales volume
     if (invoiceData.salesRepId) {
       setSalesReps(prev =>
         prev.map(r =>
@@ -462,6 +517,7 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const newInvoice: SalesInvoice = {
       ...invoiceData,
+      branchId: invoiceData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `inv-${Date.now()}`,
       createdAt: new Date().toISOString(),
       createdBy: currentUser.name
@@ -469,13 +525,13 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setSalesInvoices(prev => [newInvoice, ...prev]);
 
-    // If paid upfront in cash, create Cash Receipt Voucher (CRV)
     if (invoiceData.paidAmount > 0) {
       const newVoucher: AccountingVoucher = {
         id: `vch-${Date.now()}`,
         voucherNumber: `CRV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
         voucherType: 'CRV',
         date: invoiceData.date,
+        branchId: newInvoice.branchId,
         accountHead: `Sales Collection - ${targetCustomer.storeName}`,
         category: 'Revenue',
         description: `Upfront payment on Invoice ${newInvoice.invoiceNumber}`,
@@ -496,12 +552,10 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true, invoice: newInvoice };
   };
 
-  // Cancel Sales Invoice
   const cancelSalesInvoice = (invoiceId: string, reason: string) => {
     const inv = salesInvoices.find(i => i.id === invoiceId);
     if (!inv || inv.status === 'Cancelled') return false;
 
-    // Restore batch stock
     setBatches(prev =>
       prev.map(b => {
         const itemMatches = inv.items.filter(item => item.batchId === b.id);
@@ -513,7 +567,6 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
     );
 
-    // Revert customer balance
     setCustomers(prev =>
       prev.map(c =>
         c.id === inv.customerId
@@ -530,16 +583,15 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
-  // Add GRN (Stock Receiving & Automatic Batch Update)
   const addGoodsReceivingNote = (grnData: Omit<GoodsReceivingNote, 'id' | 'status' | 'verifiedBy'>) => {
     const newGrn: GoodsReceivingNote = {
       ...grnData,
+      branchId: grnData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `grn-${Date.now()}`,
       status: 'Stock Verified',
       verifiedBy: currentUser.name
     };
 
-    // Update or add batches
     const updatedBatches = [...batches];
     for (const item of newGrn.items) {
       const existingBatchIndex = updatedBatches.findIndex(
@@ -566,6 +618,7 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
           productId: item.productId,
           companyId: newGrn.companyId,
           warehouseId: newGrn.warehouseId,
+          branchId: newGrn.branchId,
           rackShelf: 'RACK-GEN-01',
           mfgDate: item.mfgDate,
           expiryDate: item.expiryDate,
@@ -584,12 +637,12 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setBatches(updatedBatches);
     setGrns(prev => [newGrn, ...prev]);
 
-    // Create purchase bill voucher
     const newVoucher: AccountingVoucher = {
       id: `vch-${Date.now()}`,
       voucherNumber: `PV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       voucherType: 'JV',
       date: newGrn.receivingDate,
+      branchId: newGrn.branchId,
       accountHead: `Company Payable (${newGrn.companyName})`,
       category: 'Liability',
       description: `Stock received via GRN ${newGrn.grnNumber} against Supplier Inv ${newGrn.supplierInvoiceNumber}`,
@@ -612,6 +665,7 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addPurchaseOrder = (poData: Omit<PurchaseOrder, 'id'>) => {
     const newPo: PurchaseOrder = {
       ...poData,
+      branchId: poData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `po-${Date.now()}`
     };
     setPurchaseOrders(prev => [newPo, ...prev]);
@@ -619,21 +673,19 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newPo;
   };
 
-  // Add Customer Recovery (Payment collection)
   const addCustomerRecovery = (recData: Omit<CustomerRecovery, 'id' | 'createdAt' | 'createdBy'>) => {
     const newRec: CustomerRecovery = {
       ...recData,
+      branchId: recData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `rec-${Date.now()}`,
       createdAt: new Date().toISOString(),
       createdBy: currentUser.name
     };
 
-    // Deduct customer current balance
     setCustomers(prev =>
       prev.map(c => (c.id === newRec.customerId ? { ...c, currentBalance: Math.max(0, c.currentBalance - newRec.amount) } : c))
     );
 
-    // If allocated against invoices, adjust invoice paidAmount & status
     if (newRec.allocatedInvoices && newRec.allocatedInvoices.length > 0) {
       setSalesInvoices(prev =>
         prev.map(inv => {
@@ -654,7 +706,6 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
     }
 
-    // Update sales rep recovery
     if (newRec.salesRepId) {
       setSalesReps(prev =>
         prev.map(r =>
@@ -663,13 +714,13 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
     }
 
-    // Post to accounting voucher
     const vchType = newRec.paymentMethod === 'Cash' ? 'CRV' : 'BRV';
     const newVoucher: AccountingVoucher = {
       id: `vch-${Date.now()}`,
       voucherNumber: `${vchType}-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       voucherType: vchType,
       date: newRec.paymentDate,
+      branchId: newRec.branchId,
       accountHead: `Customer Collection (${newRec.customerName})`,
       category: 'Asset',
       description: `Recovery collection via ${newRec.paymentMethod}${newRec.chequeNumber ? ' Chq #' + newRec.chequeNumber : ''}`,
@@ -684,30 +735,29 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logAudit(
       'Recovery & Receivables',
       'PAYMENT_COLLECTED',
-      `Receipt #${newRec.receiptNumber} of Rs. ${newRec.amount.toLocaleString()} received from ${newRec.customerName} via ${newRec.paymentMethod}`
+      `Receipt #${newRec.receiptNumber} of Rs. ${newRec.amount.toLocaleString()} received from ${newRec.customerName}`
     );
     return newRec;
   };
 
-  // Add Company Payment
   const addCompanyPayment = (payData: Omit<CompanyPayment, 'id' | 'createdBy'>) => {
     const newPay: CompanyPayment = {
       ...payData,
+      branchId: payData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `cpay-${Date.now()}`,
       createdBy: currentUser.name
     };
 
-    // Deduct bank account
     setBankAccounts(prev =>
       prev.map(b => (b.id === newPay.bankAccountId ? { ...b, currentBalance: b.currentBalance - newPay.amount } : b))
     );
 
-    // Create BPV voucher
     const newVoucher: AccountingVoucher = {
       id: `vch-${Date.now()}`,
       voucherNumber: newPay.voucherNumber,
       voucherType: 'BPV',
       date: newPay.paymentDate,
+      branchId: newPay.branchId,
       accountHead: `Company Settlement (${newPay.companyName})`,
       category: 'Liability',
       description: `Payment to ${newPay.companyName} via ${newPay.paymentMethod} Ref: ${newPay.transactionReference}`,
@@ -727,10 +777,10 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newPay;
   };
 
-  // Add Company Claim
   const addCompanyClaim = (claimData: Omit<CompanyClaim, 'id'>) => {
     const newClaim: CompanyClaim = {
       ...claimData,
+      branchId: claimData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `clm-${Date.now()}`
     };
     setClaims(prev => [newClaim, ...prev]);
@@ -742,7 +792,6 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newClaim;
   };
 
-  // Update Claim Status
   const updateClaimStatus = (claimId: string, status: CompanyClaim['status'], settledAmount?: number) => {
     setClaims(prev =>
       prev.map(c => {
@@ -760,14 +809,13 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logAudit('Company Claims', 'CLAIM_STATUS_UPDATED', `Claim ID ${claimId} marked as ${status}`);
   };
 
-  // Add Sales Return
   const addSalesReturn = (returnData: Omit<SalesReturn, 'id'>) => {
     const newReturn: SalesReturn = {
       ...returnData,
+      branchId: returnData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `ret-${Date.now()}`
     };
 
-    // If condition is saleable, restore to batch stock
     setBatches(prev =>
       prev.map(b => {
         const itemMatches = newReturn.items.filter(
@@ -781,7 +829,6 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
     );
 
-    // Adjust customer balance
     setCustomers(prev =>
       prev.map(c =>
         c.id === newReturn.customerId
@@ -790,12 +837,12 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       )
     );
 
-    // Create Credit Note Voucher
     const newVoucher: AccountingVoucher = {
       id: `vch-${Date.now()}`,
       voucherNumber: newReturn.creditNoteNumber,
       voucherType: 'JV',
       date: newReturn.returnDate,
+      branchId: newReturn.branchId,
       accountHead: `Sales Return Credit (${newReturn.customerName})`,
       category: 'Revenue',
       description: `Sales Return Credit Note ${newReturn.creditNoteNumber} against ${newReturn.invoiceNumber || 'Manual Return'}`,
@@ -815,7 +862,6 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newReturn;
   };
 
-  // Stock Adjustment
   const addStockAdjustment = (batchId: string, quantityDelta: number, reason: string) => {
     setBatches(prev =>
       prev.map(b => {
@@ -834,10 +880,10 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
-  // Add new batch manually
   const addNewBatch = (batchData: Omit<StockBatch, 'id'>) => {
     const newBatch: StockBatch = {
       ...batchData,
+      branchId: batchData.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
       id: `batch-${Date.now()}`
     };
     setBatches(prev => [newBatch, ...prev]);
@@ -845,7 +891,224 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newBatch;
   };
 
+  // Stock Transfer Workflow
+  const addStockTransfer = (transferData: Omit<StockTransfer, 'id'>) => {
+    const newTransfer: StockTransfer = {
+      ...transferData,
+      id: `trf-${Date.now()}`
+    };
+
+    // Deduct stock from source warehouse batches
+    setBatches(prev =>
+      prev.map(b => {
+        if (b.warehouseId === transferData.sourceWarehouseId) {
+          const matchItem = transferData.items.find(
+            i => i.productId === b.productId && i.batchNumber.toLowerCase() === b.batchNumber.toLowerCase()
+          );
+          if (matchItem) {
+            return {
+              ...b,
+              availableQuantity: Math.max(0, b.availableQuantity - matchItem.quantity)
+            };
+          }
+        }
+        return b;
+      })
+    );
+
+    setStockTransfers(prev => [newTransfer, ...prev]);
+    logAudit(
+      'Stock Transfers',
+      'TRANSFER_DISPATCHED',
+      `Transfer #${newTransfer.transferNumber} dispatched from ${transferData.sourceWarehouseName} to ${transferData.destinationWarehouseName}`
+    );
+    return newTransfer;
+  };
+
+  const receiveStockTransfer = (transferId: string) => {
+    const trf = stockTransfers.find(t => t.id === transferId);
+    if (!trf || trf.status === 'Received') return;
+
+    // Credit stock into destination warehouse batches
+    setBatches(prev => {
+      const updated = [...prev];
+      for (const item of trf.items) {
+        const destBatchIdx = updated.findIndex(
+          b =>
+            b.warehouseId === trf.destinationWarehouseId &&
+            b.productId === item.productId &&
+            b.batchNumber.toLowerCase() === item.batchNumber.toLowerCase()
+        );
+        if (destBatchIdx >= 0) {
+          updated[destBatchIdx] = {
+            ...updated[destBatchIdx],
+            availableQuantity: updated[destBatchIdx].availableQuantity + item.quantity
+          };
+        } else {
+          const sourceBatch = prev.find(
+            b => b.productId === item.productId && b.batchNumber.toLowerCase() === item.batchNumber.toLowerCase()
+          );
+          updated.push({
+            id: `batch-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            batchNumber: item.batchNumber,
+            productId: item.productId,
+            companyId: sourceBatch?.companyId || 'comp-getz',
+            warehouseId: trf.destinationWarehouseId,
+            rackShelf: 'TRANSFER-IN-01',
+            mfgDate: sourceBatch?.mfgDate || new Date().toISOString().split('T')[0],
+            expiryDate: item.expiryDate,
+            purchaseRate: sourceBatch?.purchaseRate || 250,
+            sellingRate: sourceBatch?.sellingRate || 290,
+            initialQuantity: item.quantity,
+            availableQuantity: item.quantity,
+            reservedQuantity: 0,
+            damagedQuantity: 0,
+            status: 'Active'
+          });
+        }
+      }
+      return updated;
+    });
+
+    setStockTransfers(prev =>
+      prev.map(t => (t.id === transferId ? { ...t, status: 'Received', receivedBy: currentUser.name } : t))
+    );
+
+    logAudit('Stock Transfers', 'TRANSFER_RECEIVED', `Transfer #${trf.transferNumber} received and verified into inventory`);
+  };
+
+  // Product Recall Traceability Workflow
+  const initiateProductRecall = (
+    recallData: Omit<
+      ProductRecall,
+      'id' | 'affectedCustomers' | 'blockedInWarehouseQty' | 'totalDistributedQty' | 'totalRecoveredQty'
+    >
+  ) => {
+    // 1. Immediately block any remaining stock of this batch in warehouses
+    let blockedQty = 0;
+    setBatches(prev =>
+      prev.map(b => {
+        if (
+          b.productId === recallData.productId &&
+          b.batchNumber.toLowerCase() === recallData.batchNumber.toLowerCase()
+        ) {
+          blockedQty += b.availableQuantity;
+          return {
+            ...b,
+            status: 'Recalled' as const,
+            reservedQuantity: b.reservedQuantity + b.availableQuantity
+          };
+        }
+        return b;
+      })
+    );
+
+    // 2. Scan past sales invoices to identify all customers who received this batch
+    const recipientMap: { [customerId: string]: ProductRecallAffectedCustomer } = {};
+    let totalDistributed = 0;
+
+    salesInvoices
+      .filter(inv => inv.status !== 'Cancelled')
+      .forEach(inv => {
+        inv.items.forEach(item => {
+          if (
+            item.productId === recallData.productId &&
+            item.batchNumber.toLowerCase() === recallData.batchNumber.toLowerCase()
+          ) {
+            totalDistributed += item.quantity;
+            const cust = customers.find(c => c.id === inv.customerId);
+            if (!recipientMap[inv.customerId]) {
+              recipientMap[inv.customerId] = {
+                customerId: inv.customerId,
+                customerName: inv.customerName,
+                customerStoreName: inv.customerStoreName,
+                phone: cust?.phone || '+92 300 0000000',
+                invoiceNumber: inv.invoiceNumber,
+                invoiceDate: inv.date,
+                suppliedQuantity: item.quantity,
+                returnedQuantity: 0,
+                notified: false,
+                notificationStatus: 'Pending'
+              };
+            } else {
+              recipientMap[inv.customerId].suppliedQuantity += item.quantity;
+            }
+          }
+        });
+      });
+
+    const affectedCustomers = Object.values(recipientMap);
+
+    const newRecall: ProductRecall = {
+      ...recallData,
+      id: `recall-${Date.now()}`,
+      blockedInWarehouseQty: blockedQty,
+      totalDistributedQty: totalDistributed,
+      totalRecoveredQty: 0,
+      affectedCustomers
+    };
+
+    setProductRecalls(prev => [newRecall, ...prev]);
+
+    logAudit(
+      'Product Recall (DRAP)',
+      'RECALL_INITIATED',
+      `DRAP Recall #${newRecall.recallNumber} launched for Batch ${newRecall.batchNumber} (${newRecall.productName}). ${blockedQty} units blocked in warehouse. ${affectedCustomers.length} retail stores traced.`
+    );
+
+    return newRecall;
+  };
+
+  const updateCustomerRecallStatus = (
+    recallId: string,
+    customerId: string,
+    returnedQty: number,
+    status: ProductRecallAffectedCustomer['notificationStatus']
+  ) => {
+    setProductRecalls(prev =>
+      prev.map(r => {
+        if (r.id === recallId) {
+          let extraRecovered = 0;
+          const updatedCusts = r.affectedCustomers.map(c => {
+            if (c.customerId === customerId) {
+              extraRecovered = returnedQty - c.returnedQuantity;
+              return {
+                ...c,
+                returnedQuantity: returnedQty,
+                notified: true,
+                notificationStatus: status
+              };
+            }
+            return c;
+          });
+          return {
+            ...r,
+            affectedCustomers: updatedCusts,
+            totalRecoveredQty: r.totalRecoveredQty + extraRecovered
+          };
+        }
+        return r;
+      })
+    );
+
+    logAudit('Product Recall (DRAP)', 'CUSTOMER_RECALL_UPDATED', `Recall ${recallId}: Customer ${customerId} updated to ${status} (${returnedQty} returned)`);
+  };
+
   // CRUD handlers
+  const addBranch = (b: Omit<Branch, 'id'>) => {
+    const newBranch: Branch = { ...b, id: `branch-${Date.now()}` };
+    setBranches(prev => [...prev, newBranch]);
+    logAudit('Multi-Branch Management', 'BRANCH_CREATED', `Branch ${newBranch.name} (${newBranch.code}) created`);
+    return newBranch;
+  };
+
+  const addSupplier = (s: Omit<Supplier, 'id'>) => {
+    const newSupp: Supplier = { ...s, id: `supp-${Date.now()}` };
+    setSuppliers(prev => [...prev, newSupp]);
+    logAudit('Supplier Management', 'SUPPLIER_ADDED', `Supplier ${newSupp.name} registered`);
+    return newSupp;
+  };
+
   const addProduct = (p: Omit<Product, 'id'>) => {
     const newProd: Product = { ...p, id: `prod-${Date.now()}` };
     setProducts(prev => [...prev, newProd]);
@@ -890,7 +1153,12 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addVoucher = (v: Omit<AccountingVoucher, 'id' | 'createdBy'>) => {
-    const newVch: AccountingVoucher = { ...v, id: `vch-${Date.now()}`, createdBy: currentUser.name };
+    const newVch: AccountingVoucher = {
+      ...v,
+      branchId: v.branchId || (selectedBranchFilter !== 'all' ? selectedBranchFilter : 'branch-lhr'),
+      id: `vch-${Date.now()}`,
+      createdBy: currentUser.name
+    };
     setVouchers(prev => [newVch, ...prev]);
     logAudit('Financial Accounting', 'VOUCHER_POSTED', `Voucher #${newVch.voucherNumber} (${newVch.voucherType}) posted`);
     return newVch;
@@ -905,6 +1173,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetToDemoData = () => {
     localStorage.clear();
     setCompanies(initialCompanies);
+    setBranches(initialBranches);
+    setSuppliers(initialSuppliers);
     setProducts(initialProducts);
     setBatches(initialBatches);
     setWarehouses(initialWarehouses);
@@ -923,16 +1193,20 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setVehicles(initialVehicles);
     setEmployees(initialEmployees);
     setAuditLogs(initialAuditLogs);
+    setStockTransfers(initialStockTransfers);
+    setProductRecalls(initialProductRecalls);
     setSettings(initialSettings);
     logAudit('Backup & Restore', 'SYSTEM_RESET', 'All modules restored to initial Pakistani Pharma distribution baseline');
   };
 
   const exportDatabaseJSON = () => {
     const fullBackup = {
-      version: '1.0',
+      version: '2.0',
       exportedAt: new Date().toISOString(),
       distributionName: settings.distributionName,
       companies,
+      branches,
+      suppliers,
       products,
       batches,
       warehouses,
@@ -951,6 +1225,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       vehicles,
       employees,
       auditLogs,
+      stockTransfers,
+      productRecalls,
       settings
     };
     return JSON.stringify(fullBackup, null, 2);
@@ -963,6 +1239,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Invalid PDMS backup structure');
       }
       setCompanies(data.companies);
+      if (data.branches) setBranches(data.branches);
+      if (data.suppliers) setSuppliers(data.suppliers);
       setProducts(data.products);
       setBatches(data.batches);
       if (data.warehouses) setWarehouses(data.warehouses);
@@ -981,6 +1259,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.vehicles) setVehicles(data.vehicles);
       if (data.employees) setEmployees(data.employees);
       if (data.auditLogs) setAuditLogs(data.auditLogs);
+      if (data.stockTransfers) setStockTransfers(data.stockTransfers);
+      if (data.productRecalls) setProductRecalls(data.productRecalls);
       if (data.settings) setSettings(data.settings);
 
       logAudit('Backup & Restore', 'BACKUP_RESTORED', 'Full database restored from JSON backup archive');
@@ -994,6 +1274,20 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const notifications = useMemo(() => {
     const list: SystemNotification[] = [];
     const now = new Date().getTime();
+
+    // 0. Active product recalls (CRITICAL)
+    const activeRecalls = productRecalls.filter(r => r.status === 'Active Recall');
+    for (const r of activeRecalls) {
+      list.push({
+        id: `notif-recall-${r.id}`,
+        type: 'recall',
+        severity: 'critical',
+        title: `DRAP Drug Recall Active: Batch ${r.batchNumber}`,
+        message: `${r.productName} (${r.companyName}) recalled under ${r.drapRefNumber}. ${r.affectedCustomers.length} stores traced.`,
+        timestamp: new Date().toISOString(),
+        linkModule: 'recall'
+      });
+    }
 
     // 1. Expiry alerts
     for (const b of batches) {
@@ -1045,7 +1339,7 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 3. Low stock alerts
     for (const p of products) {
       const totalStock = batches
-        .filter(b => b.productId === p.id && b.status !== 'Expired')
+        .filter(b => b.productId === p.id && b.status !== 'Expired' && b.status !== 'Recalled')
         .reduce((acc, curr) => acc + curr.availableQuantity, 0);
 
       if (totalStock <= p.reorderLevel) {
@@ -1061,22 +1355,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    // 4. Pending Claims
-    const underReviewClaims = claims.filter(c => c.status === 'Under Review' || c.status === 'Submitted');
-    if (underReviewClaims.length > 0) {
-      list.push({
-        id: 'notif-claims-pending',
-        type: 'claim',
-        severity: 'low',
-        title: `${underReviewClaims.length} Claims Awaiting Settlement`,
-        message: `Totaling Rs. ${underReviewClaims.reduce((a, b) => a + b.claimAmount, 0).toLocaleString()} submitted to pharmaceutical principals.`,
-        timestamp: new Date().toISOString(),
-        linkModule: 'claims'
-      });
-    }
-
     return list;
-  }, [batches, products, companies, customers, claims, settings]);
+  }, [batches, products, companies, customers, productRecalls, settings]);
 
   return (
     <PDMSContext.Provider
@@ -1085,9 +1365,13 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setCurrentRole,
         selectedCompanyFilter,
         setSelectedCompanyFilter,
+        selectedBranchFilter,
+        setSelectedBranchFilter,
         isDarkMode,
         toggleDarkMode,
         companies,
+        branches,
+        suppliers,
         products,
         batches,
         warehouses,
@@ -1106,6 +1390,8 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
         vehicles,
         employees,
         auditLogs,
+        stockTransfers,
+        productRecalls,
         settings,
         notifications,
         addSalesInvoice,
@@ -1119,6 +1405,12 @@ export const PDMSProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addSalesReturn,
         addStockAdjustment,
         addNewBatch,
+        addBranch,
+        addSupplier,
+        addStockTransfer,
+        receiveStockTransfer,
+        initiateProductRecall,
+        updateCustomerRecallStatus,
         addProduct,
         updateProduct,
         addCompany,

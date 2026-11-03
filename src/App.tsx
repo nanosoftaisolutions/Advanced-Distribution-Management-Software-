@@ -26,6 +26,12 @@ import { HRPayrollView } from './views/HRPayrollView';
 import { ReportsView } from './views/ReportsView';
 import { AuditLogView } from './views/AuditLogView';
 import { BackupSettingsView } from './views/BackupSettingsView';
+import { BranchesView } from './views/BranchesView';
+import { CompanyProfitabilityView } from './views/CompanyProfitabilityView';
+import { DailyPerformanceSheetView } from './views/DailyPerformanceSheetView';
+import { StockTransfersView } from './views/StockTransfersView';
+import { SuppliersView } from './views/SuppliersView';
+import { ProductRecallView } from './views/ProductRecallView';
 
 const PDMSMainLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTabId>('dashboard');
@@ -51,7 +57,11 @@ const PDMSMainLayout: React.FC = () => {
       customers: 'customers',
       sales: 'sales',
       companies: 'companies',
-      inventory: 'inventory'
+      inventory: 'inventory',
+      branches: 'branches',
+      recalls: 'product-recall',
+      transfers: 'transfers',
+      suppliers: 'suppliers'
     };
     if (moduleMap[module]) {
       setActiveTab(moduleMap[module]);
@@ -72,6 +82,8 @@ const PDMSMainLayout: React.FC = () => {
             onNewInvoice={handleCreateNewInvoice}
           />
         );
+      case 'daily-sheet':
+        return <DailyPerformanceSheetView />;
       case 'analyzers':
         return <SmartAnalyzersView />;
       case 'sales':
@@ -87,19 +99,29 @@ const PDMSMainLayout: React.FC = () => {
         return <SalesReturnsView />;
       case 'recovery':
         return <RecoveryView />;
+      case 'transfers':
+        return <StockTransfersView />;
+      case 'inventory':
+        return <InventoryView />;
+      case 'product-recall':
+        return <ProductRecallView />;
+      case 'warehouses':
+      case 'logistics':
+        return <WarehousesView />;
       case 'companies':
         return <CompaniesView />;
+      case 'company-profitability':
+        return <CompanyProfitabilityView />;
+      case 'suppliers':
+        return <SuppliersView />;
       case 'products':
         return <ProductsView />;
       case 'customers':
         return <CustomersView />;
       case 'sales-reps':
         return <SalesRepsView />;
-      case 'inventory':
-        return <InventoryView />;
-      case 'warehouses':
-      case 'logistics':
-        return <WarehousesView />;
+      case 'branches':
+        return <BranchesView />;
       case 'claims':
         return <ClaimsView />;
       case 'company-payables':

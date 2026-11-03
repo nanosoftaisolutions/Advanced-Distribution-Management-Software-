@@ -20,6 +20,38 @@ export interface UserSession {
   avatarUrl?: string;
 }
 
+export interface Branch {
+  id: string;
+  code: string;
+  name: string;
+  city: string;
+  address: string;
+  managerName: string;
+  phone: string;
+  email: string;
+  assignedCompanyIds: string[];
+  assignedWarehouseIds: string[];
+  salesTerritories: string[];
+  monthlySalesTarget: number;
+  isActive: boolean;
+}
+
+export interface Supplier {
+  id: string;
+  code: string;
+  name: string;
+  companyId: string;
+  contactPerson: string;
+  phone: string;
+  email: string;
+  city: string;
+  address: string;
+  ntn: string;
+  strn: string;
+  paymentTermsDays: number;
+  isActive: boolean;
+}
+
 export interface PharmaCompany {
   id: string;
   name: string;
@@ -42,6 +74,7 @@ export interface PharmaCompany {
   expiryReturnPolicy: string;
   damageReturnPolicy: string;
   salesTargetMonthly: number;
+  annualSalesTarget?: number;
   remarks: string;
   isActive: boolean;
 }
@@ -94,6 +127,7 @@ export interface StockBatch {
   productId: string;
   companyId: string;
   warehouseId: string;
+  branchId?: string;
   rackShelf: string;
   mfgDate: string;
   expiryDate: string;
@@ -103,7 +137,7 @@ export interface StockBatch {
   availableQuantity: number;
   reservedQuantity: number;
   damagedQuantity: number;
-  status: 'Active' | 'Near Expiry' | 'Expired' | 'Quarantined';
+  status: 'Active' | 'Near Expiry' | 'Expired' | 'Quarantined' | 'Recalled';
 }
 
 export interface Warehouse {
@@ -112,6 +146,7 @@ export interface Warehouse {
   code: string;
   city: string;
   address: string;
+  branchId?: string;
   managerName: string;
   contactNumber: string;
   hasColdStorage: boolean;
@@ -137,6 +172,7 @@ export interface Customer {
   whatsapp: string;
   address: string;
   city: string;
+  branchId?: string;
   territory: string;
   category: CustomerCategory;
   salesRepId: string;
@@ -158,6 +194,7 @@ export interface SalesRep {
   employeeCode: string;
   phone: string;
   cnic: string;
+  branchId?: string;
   assignedTerritories: string[];
   assignedCompanyIds: string[];
   monthlySalesTarget: number;
@@ -194,6 +231,7 @@ export interface SalesInvoice {
   id: string;
   invoiceNumber: string;
   date: string;
+  branchId?: string;
   customerId: string;
   customerName: string;
   customerStoreName: string;
@@ -234,6 +272,7 @@ export interface PurchaseOrder {
   poNumber: string;
   companyId: string;
   companyName: string;
+  branchId?: string;
   date: string;
   expectedDeliveryDate: string;
   items: PurchaseOrderItem[];
@@ -265,6 +304,7 @@ export interface GoodsReceivingNote {
   supplierInvoiceDate: string;
   companyId: string;
   companyName: string;
+  branchId?: string;
   warehouseId: string;
   receivingDate: string;
   items: GoodsReceivingNoteItem[];
@@ -282,6 +322,7 @@ export interface CustomerRecovery {
   receiptNumber: string;
   customerId: string;
   customerName: string;
+  branchId?: string;
   paymentDate: string;
   amount: number;
   paymentMethod: 'Cash' | 'Cheque' | 'Bank Transfer' | 'Online Deposit';
@@ -306,6 +347,7 @@ export interface CompanyPayment {
   voucherNumber: string;
   companyId: string;
   companyName: string;
+  branchId?: string;
   paymentDate: string;
   amount: number;
   paymentMethod: 'Bank Transfer' | 'Cheque' | 'Pay Order';
@@ -320,6 +362,7 @@ export interface CompanyClaim {
   claimNumber: string;
   companyId: string;
   companyName: string;
+  branchId?: string;
   claimType: 'Expiry Return' | 'Damaged Goods' | 'Breakage' | 'Promotional / Scheme' | 'Short Supply' | 'Price Difference';
   submissionDate: string;
   productId?: string;
@@ -342,6 +385,7 @@ export interface SalesReturn {
   customerId: string;
   customerName: string;
   companyId: string;
+  branchId?: string;
   returnDate: string;
   items: {
     productId: string;
@@ -382,14 +426,16 @@ export interface BankAccount {
   accountNumber: string;
   iban: string;
   branchName: string;
+  branchId?: string;
   currentBalance: number;
 }
 
 export interface AccountingVoucher {
   id: string;
   voucherNumber: string;
-  voucherType: 'CPV' | 'CRV' | 'BPV' | 'BRV' | 'JV' | 'CONTRA'; // Cash Payment, Cash Receipt, Bank Payment, Bank Receipt, Journal, Contra
+  voucherType: 'CPV' | 'CRV' | 'BPV' | 'BRV' | 'JV' | 'CONTRA';
   date: string;
+  branchId?: string;
   accountHead: string;
   category: 'Asset' | 'Liability' | 'Equity' | 'Revenue' | 'Expense';
   description: string;
@@ -402,9 +448,10 @@ export interface AccountingVoucher {
 export interface DeliveryVehicle {
   id: string;
   vehicleNumber: string;
-  vehicleType: string; // Suzuki Ravi, Shehzore, Hilux, Van
+  vehicleType: string;
   driverName: string;
   driverPhone: string;
+  branchId?: string;
   routeAssigned: string;
   fuelBalancePKR: number;
   status: 'Available' | 'On Delivery' | 'Under Maintenance';
@@ -414,6 +461,7 @@ export interface DeliveryChallan {
   id: string;
   challanNumber: string;
   date: string;
+  branchId?: string;
   vehicleId: string;
   driverName: string;
   route: string;
@@ -432,6 +480,7 @@ export interface Employee {
   name: string;
   designation: string;
   department: string;
+  branchId?: string;
   phone: string;
   cnic: string;
   joiningDate: string;
@@ -446,10 +495,67 @@ export interface AuditLog {
   userId: string;
   userName: string;
   userRole: string;
+  branchId?: string;
   module: string;
   action: string;
   details: string;
   ipAddress?: string;
+}
+
+export interface StockTransfer {
+  id: string;
+  transferNumber: string;
+  date: string;
+  sourceWarehouseId: string;
+  sourceWarehouseName: string;
+  destinationWarehouseId: string;
+  destinationWarehouseName: string;
+  items: {
+    productId: string;
+    productName: string;
+    batchNumber: string;
+    expiryDate: string;
+    quantity: number;
+  }[];
+  status: 'Dispatched' | 'Received' | 'Cancelled';
+  dispatchedBy: string;
+  receivedBy?: string;
+  remarks?: string;
+}
+
+export interface ProductRecallAffectedCustomer {
+  customerId: string;
+  customerName: string;
+  customerStoreName: string;
+  phone: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  suppliedQuantity: number;
+  returnedQuantity: number;
+  notified: boolean;
+  notificationStatus: 'Pending' | 'Notified via WhatsApp/Call' | 'Stock Recovered';
+}
+
+export interface ProductRecall {
+  id: string;
+  recallNumber: string;
+  drapRefNumber: string; // DRAP Regulatory Reference
+  companyId: string;
+  companyName: string;
+  productId: string;
+  productName: string;
+  batchNumber: string;
+  recallDate: string;
+  reason: string;
+  severity: 'Class I (Critical Health Hazard)' | 'Class II (Temporary Risk)' | 'Class III (Defective Labeling/Packaging)';
+  status: 'Active Recall' | 'Stock Quarantined' | 'Completed & Reported' | 'Disposed';
+  blockedInWarehouseQty: number;
+  totalDistributedQty: number;
+  totalRecoveredQty: number;
+  affectedCustomers: ProductRecallAffectedCustomer[];
+  initiatedBy: string;
+  completionDate?: string;
+  disposalCertificateRef?: string;
 }
 
 export interface SystemSettings {

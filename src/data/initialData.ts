@@ -18,7 +18,11 @@ import {
   DeliveryVehicle,
   Employee,
   AuditLog,
-  SystemSettings
+  SystemSettings,
+  Branch,
+  Supplier,
+  ProductRecall,
+  StockTransfer
 } from '../types/pdms';
 
 export const initialSettings: SystemSettings = {
@@ -1797,5 +1801,210 @@ export const initialAuditLogs: AuditLog[] = [
     action: 'CLAIM_SETTLED',
     details: 'Settled GSK Expiry Claim CLM-GSK-2026-012 for Rs. 23,625.00 via Credit Note CN-GSK-441',
     ipAddress: '192.168.10.15'
+  }
+];
+
+export const initialBranches: Branch[] = [
+  {
+    id: 'branch-lhr',
+    code: 'BR-LHR-HQ',
+    name: 'Lahore Central Head-Office & Distribution Hub',
+    city: 'Lahore',
+    address: 'Plot 42-B, Commercial Area, Sundar Industrial Estate, Lahore',
+    managerName: 'Muhammad Tariq Chaudhry',
+    phone: '+92 42 35920110',
+    email: 'lhr.dist@shaheenpharmadist.com.pk',
+    assignedCompanyIds: ['comp-getz', 'comp-sami', 'comp-gsk', 'comp-searle', 'comp-abbott', 'comp-martindow'],
+    assignedWarehouseIds: ['wh-central', 'wh-coldchain'],
+    salesTerritories: ['Lahore Central', 'Mall Road & Anarkali', 'Gulberg Commercial', 'DHA Lahore', 'Johar Town'],
+    monthlySalesTarget: 35000000,
+    isActive: true
+  },
+  {
+    id: 'branch-khi',
+    code: 'BR-KHI-01',
+    name: 'Karachi South Distribution Hub',
+    city: 'Karachi',
+    address: 'Sector 15, Korangi Industrial Area, Karachi',
+    managerName: 'Farhan Zaidi',
+    phone: '+92 21 35061122',
+    email: 'khi.dist@shaheenpharmadist.com.pk',
+    assignedCompanyIds: ['comp-getz', 'comp-sami', 'comp-gsk', 'comp-abbott'],
+    assignedWarehouseIds: ['wh-karachi'],
+    salesTerritories: ['Clifton & Defence', 'Saddar & Bunder Road', 'Korangi Commercial', 'Gulshan-e-Iqbal'],
+    monthlySalesTarget: 25000000,
+    isActive: true
+  },
+  {
+    id: 'branch-isb',
+    code: 'BR-ISB-01',
+    name: 'Islamabad / Rawalpindi Northern Sub-Hub',
+    city: 'Islamabad',
+    address: 'Plot 88, Sector I-9/2, Industrial Area, Islamabad',
+    managerName: 'Malik Sohail',
+    phone: '+92 51 4433221',
+    email: 'isb.dist@shaheenpharmadist.com.pk',
+    assignedCompanyIds: ['comp-getz', 'comp-gsk', 'comp-searle', 'comp-martindow'],
+    assignedWarehouseIds: ['wh-isb'],
+    salesTerritories: ['Islamabad Sectors', 'Rawalpindi Saddar', 'Murree Road Commercial'],
+    monthlySalesTarget: 18000000,
+    isActive: true
+  },
+  {
+    id: 'branch-mul',
+    code: 'BR-MUL-01',
+    name: 'Multan South Punjab Regional Hub',
+    city: 'Multan',
+    address: 'Commercial Block B, Bosan Road, Multan',
+    managerName: 'Chaudhry Akram',
+    phone: '+92 61 6511990',
+    email: 'mul.dist@shaheenpharmadist.com.pk',
+    assignedCompanyIds: ['comp-getz', 'comp-sami', 'comp-searle'],
+    assignedWarehouseIds: ['wh-central'],
+    salesTerritories: ['Multan City', 'Nishtar Road', 'Khanewal & Shujabad'],
+    monthlySalesTarget: 12000000,
+    isActive: true
+  }
+];
+
+export const initialSuppliers: Supplier[] = [
+  {
+    id: 'supp-getz',
+    code: 'SUP-GETZ-01',
+    name: 'Getz Pharma Central Dispatch',
+    companyId: 'comp-getz',
+    contactPerson: 'Tariq Mehmood Siddiqui',
+    phone: '+92 21 111-111-511',
+    email: 'supplychain@getzpharma.com',
+    city: 'Karachi',
+    address: '29-30/27 Korangi Industrial Area, Karachi',
+    ntn: '0711928-1',
+    strn: '02-01-3000-112-91',
+    paymentTermsDays: 45,
+    isActive: true
+  },
+  {
+    id: 'supp-gsk',
+    code: 'SUP-GSK-01',
+    name: 'GSK Pakistan National Logistics Hub',
+    companyId: 'comp-gsk',
+    contactPerson: 'Nadeem Farooqi',
+    phone: '+92 21 111-475-725',
+    email: 'orders.pk@gsk.com',
+    city: 'Karachi',
+    address: '35-Dockyard Road, West Wharf, Karachi',
+    ntn: '0658491-0',
+    strn: '02-04-3000-119-45',
+    paymentTermsDays: 60,
+    isActive: true
+  },
+  {
+    id: 'supp-sami',
+    code: 'SUP-SAMI-01',
+    name: 'Sami Pharmaceuticals Supply Division',
+    companyId: 'comp-sami',
+    contactPerson: 'Waseem Akhtar',
+    phone: '+92 21 35874411',
+    email: 'distribution@samipharmapk.com',
+    city: 'Karachi',
+    address: 'F-26, Block 5, Clifton, Karachi',
+    ntn: '0812903-4',
+    strn: '02-03-3000-843-12',
+    paymentTermsDays: 30,
+    isActive: true
+  },
+  {
+    id: 'supp-searle',
+    code: 'SUP-SEARLE-01',
+    name: 'The Searle Company Logistics Centre',
+    companyId: 'comp-searle',
+    contactPerson: 'Raza Haider',
+    phone: '+92 21 37170200',
+    email: 'dispatch@searlecompany.com',
+    city: 'Karachi',
+    address: 'One IBL Centre, DMCHS, Karachi',
+    ntn: '0712891-9',
+    strn: '02-08-3000-441-89',
+    paymentTermsDays: 30,
+    isActive: true
+  }
+];
+
+export const initialStockTransfers: StockTransfer[] = [
+  {
+    id: 'trf-001',
+    transferNumber: 'TRF-2026-0104',
+    date: '2026-11-01',
+    sourceWarehouseId: 'wh-central',
+    sourceWarehouseName: 'Central Distribution Hub Lahore',
+    destinationWarehouseId: 'wh-isb',
+    destinationWarehouseName: 'Capital Regional Sub-Depot Islamabad',
+    items: [
+      {
+        productId: 'prod-risek-20',
+        productName: 'Risek 20mg Capsule',
+        batchNumber: 'B-RSK20-25C',
+        expiryDate: '2027-06-14',
+        quantity: 200
+      },
+      {
+        productId: 'prod-aug-625',
+        productName: 'Augmentin 625mg Tablet',
+        batchNumber: 'B-AUG62-25D',
+        expiryDate: '2027-01-14',
+        quantity: 150
+      }
+    ],
+    status: 'Dispatched',
+    dispatchedBy: 'Muhammad Arshad (Warehouse Head)',
+    remarks: 'Inter-depot seasonal stock balancing for Islamabad region'
+  }
+];
+
+export const initialProductRecalls: ProductRecall[] = [
+  {
+    id: 'recall-001',
+    recallNumber: 'REC-DRAP-2026-009',
+    drapRefNumber: 'DRAP/QA/FBR-7712/2026',
+    companyId: 'comp-gsk',
+    companyName: 'GSK Pakistan (GlaxoSmithKline)',
+    productId: 'prod-panadol-500',
+    productName: 'Panadol 500mg Tablet (Box of 200s)',
+    batchNumber: 'B-PAN50-23Z',
+    recallDate: '2026-10-22',
+    reason: 'Batch coating disintegration assay standard deviation flagged by provincial drug quality laboratory',
+    severity: 'Class II (Temporary Risk)',
+    status: 'Active Recall',
+    blockedInWarehouseQty: 45,
+    totalDistributedQty: 80,
+    totalRecoveredQty: 25,
+    affectedCustomers: [
+      {
+        customerId: 'cust-fazaldin',
+        customerName: 'Mumtaz Ahmad Fazal',
+        customerStoreName: "Fazal Din's Pharma Plus",
+        phone: '+92 42 35870022',
+        invoiceNumber: 'INV-2026-00492',
+        invoiceDate: '2026-10-15',
+        suppliedQuantity: 40,
+        returnedQuantity: 25,
+        notified: true,
+        notificationStatus: 'Stock Recovered'
+      },
+      {
+        customerId: 'cust-almustafa',
+        customerName: 'Haji Muhammad Iqbal',
+        customerStoreName: 'Al-Mustafa Medical Store',
+        phone: '+92 42 37419920',
+        invoiceNumber: 'INV-2026-00388',
+        invoiceDate: '2026-10-18',
+        suppliedQuantity: 40,
+        returnedQuantity: 0,
+        notified: true,
+        notificationStatus: 'Notified via WhatsApp/Call'
+      }
+    ],
+    initiatedBy: 'Muhammad Tariq Chaudhry (Distribution Manager)',
+    disposalCertificateRef: 'PENDING-DRAP-INSPECTION'
   }
 ];

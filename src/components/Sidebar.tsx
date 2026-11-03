@@ -19,24 +19,35 @@ import {
   BarChart3,
   ShieldAlert,
   Settings,
-  Cpu
+  Cpu,
+  MapPin,
+  PieChart,
+  ClipboardList,
+  ArrowLeftRight,
+  Factory
 } from 'lucide-react';
 import { usePDMS } from '../context/PDMSContext';
 
 export type NavTabId =
   | 'dashboard'
+  | 'daily-sheet'
   | 'analyzers'
   | 'sales'
   | 'purchases'
-  | 'sales-returns'
   | 'recovery'
+  | 'sales-returns'
+  | 'transfers'
+  | 'inventory'
+  | 'product-recall'
+  | 'warehouses'
+  | 'logistics'
   | 'companies'
+  | 'company-profitability'
+  | 'suppliers'
   | 'products'
   | 'customers'
   | 'sales-reps'
-  | 'inventory'
-  | 'warehouses'
-  | 'logistics'
+  | 'branches'
   | 'claims'
   | 'company-payables'
   | 'schemes'
@@ -66,11 +77,16 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
-  const { batches } = usePDMS();
+  const { batches, productRecalls } = usePDMS();
 
   // Near expiry count
   const nearExpiryCount = batches.filter(
     b => b.status === 'Near Expiry' || b.status === 'Expired'
+  ).length;
+
+  // Active recalls count
+  const activeRecallsCount = productRecalls.filter(
+    r => r.status === 'Active Recall' || r.status === 'Stock Quarantined'
   ).length;
 
   const navGroups: NavGroup[] = [
@@ -78,6 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
       group: 'OVERVIEW',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'daily-sheet', label: 'Daily Performance Sheet', icon: ClipboardList, badge: 'Daily' },
         { id: 'analyzers', label: 'Smart Analyzers', icon: Cpu, badge: 'AI' }
       ]
     },
@@ -87,7 +104,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
         { id: 'sales', label: 'Sales & Invoicing', icon: Receipt },
         { id: 'purchases', label: 'Purchases & GRN', icon: ShoppingCart },
         { id: 'recovery', label: 'Recovery & Receivables', icon: HandCoins },
-        { id: 'sales-returns', label: 'Sales Returns', icon: RotateCcw }
+        { id: 'sales-returns', label: 'Sales Returns', icon: RotateCcw },
+        { id: 'transfers', label: 'Stock Transfers', icon: ArrowLeftRight }
       ]
     },
     {
@@ -100,6 +118,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
           counter: nearExpiryCount > 0 ? nearExpiryCount : undefined,
           counterType: 'amber'
         },
+        {
+          id: 'product-recall',
+          label: 'DRAP Product Recalls',
+          icon: ShieldAlert,
+          counter: activeRecallsCount > 0 ? activeRecallsCount : undefined,
+          counterType: 'rose'
+        },
         { id: 'warehouses', label: 'Warehouses & Racks', icon: Warehouse },
         { id: 'logistics', label: 'Fleet & Deliveries', icon: Truck }
       ]
@@ -108,9 +133,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
       group: 'PHARMA PARTNERS & MASTER',
       items: [
         { id: 'companies', label: 'Pharma Companies', icon: Building2 },
+        { id: 'company-profitability', label: 'ROI & Profitability', icon: PieChart, badge: 'ROI' },
+        { id: 'suppliers', label: 'Principal Suppliers', icon: Factory },
         { id: 'products', label: 'Products Master', icon: Package },
         { id: 'customers', label: 'Customers & Stores', icon: Users },
-        { id: 'sales-reps', label: 'Sales Representatives', icon: UserCheck }
+        { id: 'sales-reps', label: 'Sales Representatives', icon: UserCheck },
+        { id: 'branches', label: 'Branches & Depots', icon: MapPin }
       ]
     },
     {
